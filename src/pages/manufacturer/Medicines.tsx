@@ -1,7 +1,7 @@
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { motion } from "framer-motion";
-import { Box, Calendar, MoreVertical, Plus, Search, ExternalLink, Ban, CheckCircle, FileText, Trash2, Wallet, LogOut } from "lucide-react";
+import { Box, Calendar, MoreVertical, Plus, Search, ExternalLink, Ban, CheckCircle, FileText, Trash2, Wallet, LogOut, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -35,6 +35,11 @@ export default function ManufacturerMedicines() {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [medicineToDelete, setMedicineToDelete] = useState<any>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success(`${label} copied to clipboard`);
+  };
 
   const handleToggleStatus = async (id: any, currentStatus: boolean) => {
     try {
@@ -312,20 +317,50 @@ export default function ManufacturerMedicines() {
               <div className="col-span-1 md:col-span-2 space-y-4 pt-4 border-t border-slate-800">
                 <div>
                   <label className="text-xs text-gray-500 uppercase tracking-wider">Token ID</label>
-                  <div className="font-mono text-xs bg-slate-950 p-2 rounded border border-slate-800 text-gray-300">
-                    {selectedMedicine.tokenId}
+                  <div className="flex items-center gap-2">
+                    <div className="font-mono text-xs bg-slate-950 p-2 rounded border border-slate-800 text-gray-300 flex-1 overflow-hidden text-ellipsis">
+                      {selectedMedicine.tokenId}
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-gray-400 hover:text-white"
+                      onClick={() => copyToClipboard(selectedMedicine.tokenId, "Token ID")}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
                 <div>
                   <label className="text-xs text-gray-500 uppercase tracking-wider">Transaction Hash</label>
-                  <div className="font-mono text-xs bg-slate-950 p-2 rounded border border-slate-800 text-gray-300 break-all">
-                    {selectedMedicine.transactionHash}
+                  <div className="flex items-center gap-2">
+                    <div className="font-mono text-xs bg-slate-950 p-2 rounded border border-slate-800 text-gray-300 flex-1 overflow-hidden text-ellipsis">
+                      {selectedMedicine.transactionHash}
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-gray-400 hover:text-white"
+                      onClick={() => copyToClipboard(selectedMedicine.transactionHash, "Transaction Hash")}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
                  <div>
                   <label className="text-xs text-gray-500 uppercase tracking-wider">Contract Address</label>
-                  <div className="font-mono text-xs bg-slate-950 p-2 rounded border border-slate-800 text-gray-300 break-all">
-                    {selectedMedicine.contractAddress}
+                  <div className="flex items-center gap-2">
+                    <div className="font-mono text-xs bg-slate-950 p-2 rounded border border-slate-800 text-gray-300 flex-1 overflow-hidden text-ellipsis">
+                      {selectedMedicine.contractAddress}
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-gray-400 hover:text-white"
+                      onClick={() => copyToClipboard(selectedMedicine.contractAddress, "Contract Address")}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
               </div>
