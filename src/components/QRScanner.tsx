@@ -12,37 +12,31 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
   const [scanError, setScanError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // Use a unique ID for each instance to avoid conflicts
+  const [elementId] = useState(() => `qr-reader-${Math.random().toString(36).substr(2, 9)}`);
 
   useEffect(() => {
+    let isMounted = true;
     let html5QrCode: any;
-    const elementId = "qr-reader";
 
     const initScanner = async () => {
       // Ensure element exists
       if (!document.getElementById(elementId)) {
-        console.warn("Scanner element not found, retrying...");
         return;
       }
 
       try {
-        setIsLoading(true);
-        setScanError(null);
+        if (isMounted) {
+            setIsLoading(true);
+            setScanError(null);
+        }
         
         // Use global window.Html5Qrcode from CDN
         if (!window.Html5Qrcode) {
             throw new Error("Scanner library not loaded");
         }
 
-        // Cleanup existing instance if any
-        if (scannerRef.current) {
-            try {
-                await scannerRef.current.stop();
-                await scannerRef.current.clear();
-            } catch (e) {
-                // ignore cleanup errors
-            }
-        }
-
+        // Create new instance
         html5QrCode = new window.Html5Qrcode(elementId);
         scannerRef.current = html5QrCode;
 
@@ -54,40 +48,50 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
             aspectRatio: 1.0
           },
           (decodedText: string, decodedResult: any) => {
-            // Success callback
-            onScanSuccess(decodedText, decodedResult);
+            if (isMounted) onScanSuccess(decodedText, decodedResult);
           },
           (errorMessage: string) => {
-            // Error callback (called frequently when no QR is found)
-            if (onScanFailure) onScanFailure(errorMessage);
+            if (isMounted && onScanFailure) onScanFailure(errorMessage);
           }
         );
         
-        setIsLoading(false);
+        if (isMounted) setIsLoading(false);
       } catch (err: any) {
         console.error("Error starting scanner:", err);
-        setIsLoading(false);
-        // Only show error if it's a permission issue or critical failure
-        if (err?.name === "NotAllowedError" || err?.message?.includes("permission")) {
-            setScanError("Camera permission denied. Please allow camera access.");
-        } else {
-            setScanError("Failed to start camera. Please try uploading an image.");
+        if (isMounted) {
+            setIsLoading(false);
+            // Only show error if it's a permission issue or critical failure
+            if (err?.name === "NotAllowedError" || err?.message?.includes("permission")) {
+                setScanError("Camera permission denied. Please allow camera access.");
+            } else {
+                setScanError("Failed to start camera. Please try uploading an image.");
+            }
         }
       }
     };
 
-    // Initialize with a slight delay to ensure DOM is ready and previous instances are cleared
+    // Initialize with a slight delay to ensure DOM is ready
     const timer = setTimeout(initScanner, 500);
 
     return () => {
+      isMounted = false;
       clearTimeout(timer);
+      
+      // Defensive cleanup
       if (scannerRef.current) {
-        scannerRef.current.stop().catch(() => {}).finally(() => {
-            scannerRef.current.clear().catch(() => {});
-        });
+        const scanner = scannerRef.current;
+        // Use Promise.resolve to handle cases where stop() returns undefined or a promise
+        Promise.resolve(scanner.stop())
+            .catch(() => {
+                // Ignore stop errors (e.g. if not running)
+            })
+            .finally(() => {
+                // Always try to clear
+                scanner.clear().catch(() => {});
+            });
       }
     };
-  }, [onScanSuccess, onScanFailure]);
+  }, [onScanSuccess, onScanFailure, elementId]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
@@ -99,21 +103,26 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
         return;
     }
 
-    if (!scannerRef.current) {
-        try {
-            scannerRef.current = new window.Html5Qrcode("qr-reader");
-        } catch (err) {
-            // If element doesn't exist or other error, we might fail to create instance
-            // But usually the element is there.
-        }
-    }
-
     try {
         setIsLoading(true);
-        // If we still don't have a scanner ref (e.g. camera init failed completely), create a temp one
-        const scanner = scannerRef.current || new window.Html5Qrcode("qr-reader");
-        const result = await scanner.scanFile(file, true);
-        onScanSuccess(result, null);
+        
+        // Use existing instance or create a temporary one if needed
+        let scanner = scannerRef.current;
+        if (!scanner) {
+            try {
+                scanner = new window.Html5Qrcode(elementId);
+                // Don't assign to ref if we are just scanning a file temporarily
+                // or maybe we should? Let's keep it local if ref is null
+            } catch (err) {
+                // If element doesn't exist, we can't create instance easily with this library
+                // But usually element exists.
+            }
+        }
+
+        if (scanner) {
+            const result = await scanner.scanFile(file, true);
+            onScanSuccess(result, null);
+        }
     } catch (err) {
         console.error("Error scanning file:", err);
         setScanError("Could not read QR code from image. Please try a clearer image.");
@@ -127,13 +136,14 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
   const handleRetry = () => {
     setScanError(null);
     setIsLoading(true);
+    // Force re-mount or reload
     window.location.reload();
   };
 
   return (
     <div className="w-full max-w-md mx-auto flex flex-col gap-4">
       <div className="relative bg-black rounded-lg overflow-hidden min-h-[300px] w-full border border-slate-800 shadow-inner">
-        <div id="qr-reader" className="w-full h-full min-h-[300px]" />
+        <div id={elementId} className="w-full h-full min-h-[300px]" />
         
         {isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-white z-10">
