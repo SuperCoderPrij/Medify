@@ -132,26 +132,60 @@ export default function GenerateQR() {
     
     try {
       // Dynamically import libraries to avoid bundling issues
-      const JSZip = (await import("jszip")).default;
-      const { saveAs } = await import("file-saver");
+      const JSZipModule = await import("jszip");
+      // Handle different export types (CommonJS vs ESM)
+      const JSZip = JSZipModule.default || JSZipModule;
+      
+      const FileSaverModule = await import("file-saver");
+      const saveAs = FileSaverModule.saveAs || FileSaverModule.default;
 
+      // @ts-ignore
       const zip = new JSZip();
       const folder = zip.folder("qr-codes");
+      
+      if (!folder) throw new Error("Failed to create zip folder");
+
+      let count = 0;
       
       // Generate QR for each unit
       for (const unit of medicineUnits) {
         const canvas = document.getElementById(`qr-canvas-${unit.tokenId}`) as HTMLCanvasElement;
         if (canvas) {
           const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve));
-          if (blob && folder) {
+          if (blob) {
             folder.file(`${unit.tokenId}.png`, blob);
+            count++;
           }
         }
       }
       
+      if (count === 0) {
+        toast.error("No QR codes found to download", {
+          description: "Please ensure QR codes are visible on screen."
+        });
+        return;
+      }
+
       const content = await zip.generateAsync({ type: "blob" });
-      saveAs(content, `batch-${selectedMedicineId}-qrs.zip`);
-      toast.success("QR Codes downloaded successfully");
+      const fileName = `batch-${selectedMedicineId}-qrs.zip`;
+      
+      if (saveAs) {
+        saveAs(content, fileName);
+      } else {
+        // Fallback download method
+        const url = URL.createObjectURL(content);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+      
+      toast.success("QR Codes downloaded successfully", {
+        description: `${count} QR codes zipped.`
+      });
     } catch (error) {
       console.error(error);
       toast.error("Failed to download QR codes");
