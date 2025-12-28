@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { useWeb3 } from "@/hooks/use-web3";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 
@@ -37,7 +38,7 @@ export default function GenerateQR() {
   // Batch Mode State
   const [selectedMedicineId, setSelectedMedicineId] = useState<string>("");
   const medicineUnits = useQuery(api.medicines.getMedicineUnits, 
-    selectedMedicineId ? { medicineId: selectedMedicineId as any } : "skip"
+    selectedMedicineId ? { medicineId: selectedMedicineId as Id<"medicines"> } : "skip"
   );
   const [isDownloading, setIsDownloading] = useState(false);
 
