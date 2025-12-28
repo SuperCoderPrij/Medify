@@ -51,7 +51,9 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
             if (isMounted) onScanSuccess(decodedText, decodedResult);
           },
           (errorMessage: string) => {
-            if (isMounted && onScanFailure) onScanFailure(errorMessage);
+            // Only report critical errors or if explicitly requested
+            // Many errors are just "no QR code found" in the current frame
+            // if (isMounted && onScanFailure) onScanFailure(errorMessage);
           }
         );
         
@@ -64,7 +66,8 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
             if (err?.name === "NotAllowedError" || err?.message?.includes("permission")) {
                 setScanError("Camera permission denied. Please allow camera access.");
             } else {
-                setScanError("Failed to start camera. Please try uploading an image.");
+                // Don't show generic error immediately, let user try upload
+                // setScanError("Failed to start camera. Please try uploading an image.");
             }
         }
       }
@@ -105,27 +108,33 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
 
     try {
         setIsLoading(true);
+        setScanError(null);
         
-        // Use existing instance or create a temporary one if needed
-        let scanner = scannerRef.current;
-        if (!scanner) {
-            try {
-                scanner = new window.Html5Qrcode(elementId);
-                // Don't assign to ref if we are just scanning a file temporarily
-                // or maybe we should? Let's keep it local if ref is null
-            } catch (err) {
-                // If element doesn't exist, we can't create instance easily with this library
-                // But usually element exists.
+        // Create a temporary container for file scanning to avoid conflicts with camera
+        // This isolates the file scan from the active camera scanner
+        const tempId = `temp-qr-${Math.random().toString(36).substr(2, 9)}`;
+        const tempDiv = document.createElement('div');
+        tempDiv.id = tempId;
+        tempDiv.style.display = 'none';
+        document.body.appendChild(tempDiv);
+
+        try {
+            const fileScanner = new window.Html5Qrcode(tempId);
+            const result = await fileScanner.scanFile(file, true);
+            onScanSuccess(result, null);
+            // Cleanup file scanner
+            fileScanner.clear().catch(() => {});
+        } catch (err) {
+             console.error("Error scanning file:", err);
+             setScanError("Could not read QR code from image. Please try a clearer image.");
+        } finally {
+            if (document.body.contains(tempDiv)) {
+                document.body.removeChild(tempDiv);
             }
         }
-
-        if (scanner) {
-            const result = await scanner.scanFile(file, true);
-            onScanSuccess(result, null);
-        }
     } catch (err) {
-        console.error("Error scanning file:", err);
-        setScanError("Could not read QR code from image. Please try a clearer image.");
+        console.error("Error in file upload handler:", err);
+        setScanError("Error processing image.");
     } finally {
         setIsLoading(false);
         // Reset file input
@@ -148,7 +157,7 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
         {isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-white z-10">
             <Loader2 className="h-10 w-10 animate-spin text-cyan-400 mb-3" />
-            <p className="text-sm text-gray-400 font-medium">Initializing Camera...</p>
+            <p className="text-sm text-gray-400 font-medium">Initializing Scanner...</p>
           </div>
         )}
         
