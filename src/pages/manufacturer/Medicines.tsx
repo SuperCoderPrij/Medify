@@ -1,7 +1,7 @@
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { motion } from "framer-motion";
-import { Box, Calendar, MoreVertical, Plus, Search, ExternalLink, Ban, CheckCircle, FileText, Trash2 } from "lucide-react";
+import { Box, Calendar, MoreVertical, Plus, Search, ExternalLink, Ban, CheckCircle, FileText, Trash2, Wallet, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,22 +22,15 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { useWeb3 } from "@/hooks/use-web3";
 
 export default function ManufacturerMedicines() {
   const medicines = useQuery(api.medicines.getManufacturerMedicines);
   const toggleStatus = useMutation(api.medicines.toggleMedicineStatus);
   const deleteMedicine = useMutation(api.medicines.deleteMedicine);
+  const { account, connectWallet, disconnectWallet } = useWeb3();
+  
   const [selectedMedicine, setSelectedMedicine] = useState<any>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [medicineToDelete, setMedicineToDelete] = useState<any>(null);
@@ -88,7 +81,28 @@ export default function ManufacturerMedicines() {
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-3"
         >
+          {account ? (
+            <Button 
+              variant="outline" 
+              onClick={disconnectWallet}
+              className="border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/10"
+            >
+              <Wallet className="mr-2 h-4 w-4" />
+              {account.slice(0, 6)}...{account.slice(-4)}
+              <LogOut className="ml-2 h-4 w-4" />
+            </Button>
+          ) : (
+            <Button 
+              variant="outline" 
+              onClick={connectWallet}
+              className="border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/10"
+            >
+              <Wallet className="mr-2 h-4 w-4" />
+              Connect Wallet
+            </Button>
+          )}
           <Link to="/manufacturer/create">
             <Button className="bg-cyan-500 hover:bg-cyan-600 text-white">
               <Plus className="mr-2 h-4 w-4" />
@@ -320,28 +334,32 @@ export default function ManufacturerMedicines() {
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className="bg-slate-900 border-slate-800 text-white">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-400">
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="bg-slate-900 border-slate-800 text-white">
+          <DialogHeader>
+            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogDescription className="text-gray-400">
               This action cannot be undone. This will permanently delete the medicine record
               for <span className="text-white font-medium">{medicineToDelete?.medicineName}</span> from the database.
               <br /><br />
               Note: The NFT on the blockchain will remain, but it will no longer be tracked in this system.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="bg-transparent border-slate-700 text-white hover:bg-slate-800 hover:text-white">Cancel</AlertDialogCancel>
-            <AlertDialogAction
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <DialogClose asChild>
+              <Button variant="outline" className="bg-transparent border-slate-700 text-white hover:bg-slate-800 hover:text-white">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
               onClick={handleDeleteMedicine}
               className="bg-red-500 hover:bg-red-600 text-white border-0"
             >
               Delete Medicine
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
