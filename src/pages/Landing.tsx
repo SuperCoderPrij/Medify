@@ -112,7 +112,7 @@ export default function Landing() {
                   <DialogHeader>
                     <DialogTitle>Scan Medicine QR</DialogTitle>
                   </DialogHeader>
-                  <div className="aspect-square bg-black rounded-lg flex items-center justify-center border-2 border-cyan-500/30 relative overflow-hidden">
+                  <div className="w-full">
                     <QRScanner onScanSuccess={handleScanSuccess} />
                   </div>
                 </DialogContent>
