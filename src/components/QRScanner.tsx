@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Image, Loader2, RefreshCw } from "lucide-react";
+import { Image, Loader2, RefreshCw, Camera, AlertCircle } from "lucide-react";
 
 interface QRScannerProps {
   onScanSuccess: (decodedText: string, decodedResult: any) => void;
@@ -14,6 +14,7 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
   const fileInputRef = useRef<HTMLInputElement>(null);
   // Use a unique ID for each instance to avoid conflicts
   const [elementId] = useState(() => `qr-reader-${Math.random().toString(36).substr(2, 9)}`);
+  const initializationRef = useRef<Promise<void> | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -30,6 +31,16 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
             setIsLoading(true);
             setScanError(null);
         }
+
+        // Check for Secure Context (HTTPS)
+        if (window.isSecureContext === false) {
+            throw new Error("Camera access requires a secure context (HTTPS). Please use localhost or HTTPS.");
+        }
+        
+        // Check for MediaDevices support
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            throw new Error("Camera not supported in this browser.");
+        }
         
         // Use global window.Html5Qrcode from CDN
         if (!window.Html5Qrcode) {
@@ -40,7 +51,8 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
         html5QrCode = new window.Html5Qrcode(elementId);
         scannerRef.current = html5QrCode;
 
-        await html5QrCode.start(
+        // Start the scanner with a timeout race
+        const startPromise = html5QrCode.start(
           { facingMode: "environment" },
           { 
             fps: 10, 
@@ -56,6 +68,14 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
             // if (isMounted && onScanFailure) onScanFailure(errorMessage);
           }
         );
+
+        initializationRef.current = startPromise;
+
+        // Timeout after 10 seconds if camera doesn't start
+        await Promise.race([
+            startPromise,
+            new Promise((_, reject) => setTimeout(() => reject(new Error("Camera initialization timed out")), 10000))
+        ]);
         
         if (isMounted) setIsLoading(false);
       } catch (err: any) {
@@ -64,10 +84,15 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
             setIsLoading(false);
             // Only show error if it's a permission issue or critical failure
             if (err?.name === "NotAllowedError" || err?.message?.includes("permission")) {
-                setScanError("Camera permission denied. Please allow camera access.");
+                setScanError("Camera permission denied. Please allow camera access in your browser settings.");
+            } else if (err?.name === "NotFoundError" || err?.message?.includes("device")) {
+                setScanError("No camera found on this device.");
+            } else if (err?.message?.includes("timed out")) {
+                setScanError("Camera took too long to start. Please try again.");
+            } else if (err?.message?.includes("secure context")) {
+                setScanError(err.message);
             } else {
-                // Don't show generic error immediately, let user try upload
-                // setScanError("Failed to start camera. Please try uploading an image.");
+                setScanError("Failed to start camera. Please try uploading an image.");
             }
         }
       }
@@ -88,22 +113,24 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
         // Use Promise.resolve to handle cases where stop() returns undefined or a promise
         // and wrap in try-catch for synchronous errors
         try {
+            // If initialization is still pending, we should wait or just try to stop
+            // Ideally we wait for start to finish before stopping, but here we just try to stop
             Promise.resolve(scanner.stop())
-                .catch(() => {
-                    // Ignore stop errors (e.g. if not running)
+                .catch((e) => {
+                    console.warn("Failed to stop scanner during cleanup:", e);
                 })
                 .finally(() => {
-                    // Always try to clear, wrap in Promise.resolve just in case clear() returns undefined
+                    // Always try to clear
                     try {
-                        Promise.resolve(scanner.clear()).catch(() => {});
+                        scanner.clear().catch(() => {});
                     } catch (e) {
                         // Ignore clear errors
                     }
                 });
         } catch (err) {
-            // If stop throws synchronously, still try to clear
+            // If stop throws synchronously
             try {
-                Promise.resolve(scanner.clear()).catch(() => {});
+                scanner.clear().catch(() => {});
             } catch (e) {
                 // Ignore
             }
@@ -162,12 +189,14 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
     setScanError(null);
     setIsLoading(true);
     // Force re-mount or reload
+    // Instead of full reload, we can try to re-run the effect by toggling a key in parent
+    // But here we just reload the page as a fallback
     window.location.reload();
   };
 
   return (
     <div className="w-full flex flex-col gap-4">
-      <div className="relative bg-black rounded-lg overflow-hidden min-h-[250px] w-full border-2 border-cyan-500/30 shadow-inner">
+      <div className="relative bg-slate-900 rounded-lg overflow-hidden min-h-[250px] w-full border-2 border-cyan-500/30 shadow-inner">
         <div id={elementId} className="w-full h-full min-h-[250px]" />
         
         {isLoading && (
@@ -179,6 +208,7 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
         
         {scanError && !isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/95 text-white z-10 p-6 text-center">
+            <AlertCircle className="h-10 w-10 text-red-400 mb-3" />
             <p className="text-red-400 mb-6 font-medium">{scanError}</p>
             <div className="flex gap-3">
                 <Button 
