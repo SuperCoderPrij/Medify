@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, createContext, useContext, ReactNode, createElement } from 'react';
+import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
 import { ethers } from 'ethers';
 import { toast } from 'sonner';
 
@@ -166,8 +166,8 @@ export function Web3Provider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  return createElement(Web3Context.Provider, {
-    value: {
+  return (
+    <Web3Context.Provider value={{
       account,
       isConnecting,
       provider,
@@ -175,8 +175,10 @@ export function Web3Provider({ children }: { children: ReactNode }) {
       connectWallet,
       disconnectWallet,
       switchToAmoy
-    }
-  }, children);
+    }}>
+      {children}
+    </Web3Context.Provider>
+  );
 }
 
 export function useWeb3() {
