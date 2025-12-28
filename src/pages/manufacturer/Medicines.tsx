@@ -1,7 +1,7 @@
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { motion } from "framer-motion";
-import { Box, Calendar, MoreVertical, Plus, Search, ExternalLink, Ban, CheckCircle, FileText } from "lucide-react";
+import { Box, Calendar, MoreVertical, Plus, Search, ExternalLink, Ban, CheckCircle, FileText, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,12 +23,25 @@ import { Link } from "react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function ManufacturerMedicines() {
   const medicines = useQuery(api.medicines.getManufacturerMedicines);
   const toggleStatus = useMutation(api.medicines.toggleMedicineStatus);
+  const deleteMedicine = useMutation(api.medicines.deleteMedicine);
   const [selectedMedicine, setSelectedMedicine] = useState<any>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [medicineToDelete, setMedicineToDelete] = useState<any>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleToggleStatus = async (id: any, currentStatus: boolean) => {
     try {
@@ -36,6 +49,19 @@ export default function ManufacturerMedicines() {
       toast.success(`Medicine ${!currentStatus ? "activated" : "deactivated"} successfully`);
     } catch (error) {
       toast.error("Failed to update status");
+      console.error(error);
+    }
+  };
+
+  const handleDeleteMedicine = async () => {
+    if (!medicineToDelete) return;
+    try {
+      await deleteMedicine({ id: medicineToDelete._id });
+      toast.success("Medicine deleted successfully");
+      setIsDeleteDialogOpen(false);
+      setMedicineToDelete(null);
+    } catch (error) {
+      toast.error("Failed to delete medicine");
       console.error(error);
     }
   };
@@ -172,7 +198,7 @@ export default function ManufacturerMedicines() {
                             View on Blockchain
                           </DropdownMenuItem>
                           <DropdownMenuItem 
-                            className={`hover:bg-slate-800 focus:bg-slate-800 cursor-pointer ${medicine.isActive ? "text-red-400" : "text-green-400"}`}
+                            className={`hover:bg-slate-800 focus:bg-slate-800 cursor-pointer ${medicine.isActive ? "text-yellow-400" : "text-green-400"}`}
                             onClick={() => handleToggleStatus(medicine._id, medicine.isActive)}
                           >
                             {medicine.isActive ? (
@@ -186,6 +212,16 @@ export default function ManufacturerMedicines() {
                                 Activate
                               </>
                             )}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="hover:bg-slate-800 focus:bg-slate-800 cursor-pointer text-red-400 focus:text-red-400"
+                            onClick={() => {
+                              setMedicineToDelete(medicine);
+                              setIsDeleteDialogOpen(true);
+                            }}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -283,6 +319,29 @@ export default function ManufacturerMedicines() {
           )}
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent className="bg-slate-900 border-slate-800 text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-400">
+              This action cannot be undone. This will permanently delete the medicine record
+              for <span className="text-white font-medium">{medicineToDelete?.medicineName}</span> from the database.
+              <br /><br />
+              Note: The NFT on the blockchain will remain, but it will no longer be tracked in this system.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-transparent border-slate-700 text-white hover:bg-slate-800 hover:text-white">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteMedicine}
+              className="bg-red-500 hover:bg-red-600 text-white border-0"
+            >
+              Delete Medicine
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

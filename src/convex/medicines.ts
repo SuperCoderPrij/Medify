@@ -150,3 +150,25 @@ export const toggleMedicineStatus = mutation({
     await ctx.db.patch(args.id, { isActive: args.isActive });
   },
 });
+
+// Delete a medicine
+export const deleteMedicine = mutation({
+  args: { id: v.id("medicines") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    const medicine = await ctx.db.get(args.id);
+    if (!medicine) {
+      throw new Error("Medicine not found");
+    }
+
+    if (medicine.manufacturerId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
+    await ctx.db.delete(args.id);
+  },
+});
