@@ -2,11 +2,53 @@ import { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { toast } from 'sonner';
 
+export const POLYGON_AMOY_CHAIN_ID = '80002';
+const POLYGON_AMOY_CHAIN_ID_HEX = '0x13882';
+
 export function useWeb3() {
   const [account, setAccount] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
   const [chainId, setChainId] = useState<string | null>(null);
+
+  const switchToAmoy = useCallback(async () => {
+    if (!window.ethereum) return;
+
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: POLYGON_AMOY_CHAIN_ID_HEX }],
+      });
+    } catch (switchError: any) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: POLYGON_AMOY_CHAIN_ID_HEX,
+                chainName: 'Polygon Amoy Testnet',
+                nativeCurrency: {
+                  name: 'POL',
+                  symbol: 'POL',
+                  decimals: 18,
+                },
+                rpcUrls: ['https://rpc-amoy.polygon.technology/'],
+                blockExplorerUrls: ['https://www.oklink.com/amoy'],
+              },
+            ],
+          });
+        } catch (addError) {
+          console.error(addError);
+          toast.error("Failed to add Polygon Amoy network");
+        }
+      } else {
+        console.error(switchError);
+        toast.error("Failed to switch network");
+      }
+    }
+  }, []);
 
   const connectWallet = useCallback(async () => {
     if (!window.ethereum) {
@@ -94,6 +136,7 @@ export function useWeb3() {
     provider,
     chainId,
     connectWallet,
-    disconnectWallet
+    disconnectWallet,
+    switchToAmoy
   };
 }

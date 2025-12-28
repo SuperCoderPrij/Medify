@@ -17,13 +17,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useWeb3 } from "@/hooks/use-web3";
+import { useWeb3, POLYGON_AMOY_CHAIN_ID } from "@/hooks/use-web3";
 
 export default function CreateMedicine() {
   const navigate = useNavigate();
   const createMedicine = useMutation(api.medicines.createMedicine);
   const user = useQuery(api.users.currentUser);
-  const { account, connectWallet } = useWeb3();
+  const { account, connectWallet, chainId, switchToAmoy } = useWeb3();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -35,6 +35,14 @@ export default function CreateMedicine() {
         description: "Please connect your MetaMask wallet to mint NFTs."
       });
       connectWallet();
+      return;
+    }
+
+    if (chainId !== POLYGON_AMOY_CHAIN_ID) {
+      toast.error("Wrong Network", {
+        description: "Please switch to Polygon Amoy Testnet."
+      });
+      switchToAmoy();
       return;
     }
 
@@ -68,7 +76,7 @@ export default function CreateMedicine() {
       });
 
       toast.success("Medicine Minted Successfully", {
-        description: `Token ID: ${tokenId} has been created on the blockchain using wallet ${account.slice(0, 6)}...`
+        description: `Token ID: ${tokenId} has been created on Polygon Amoy using wallet ${account.slice(0, 6)}...`
       });
       navigate("/manufacturer/medicines");
     } catch (error) {
@@ -116,6 +124,29 @@ export default function CreateMedicine() {
             className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10"
           >
             Connect Wallet
+          </Button>
+        </motion.div>
+      )}
+
+      {account && chainId !== POLYGON_AMOY_CHAIN_ID && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4 flex items-center justify-between"
+        >
+          <div className="flex items-center gap-3">
+            <Shield className="h-5 w-5 text-purple-400" />
+            <div>
+              <h3 className="font-medium text-purple-400">Wrong Network</h3>
+              <p className="text-sm text-purple-400/80">Please switch to Polygon Amoy Testnet to mint NFTs.</p>
+            </div>
+          </div>
+          <Button 
+            onClick={switchToAmoy}
+            variant="outline" 
+            className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
+          >
+            Switch Network
           </Button>
         </motion.div>
       )}
@@ -218,7 +249,7 @@ export default function CreateMedicine() {
               <div className="pt-4 border-t border-slate-800">
                 <Button
                   type="submit"
-                  disabled={isSubmitting || !account}
+                  disabled={isSubmitting || !account || chainId !== POLYGON_AMOY_CHAIN_ID}
                   className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white py-6 text-lg font-semibold shadow-[0_0_20px_rgba(34,211,238,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
