@@ -128,3 +128,25 @@ export const getManufacturerStats = query({
     };
   },
 });
+
+// Toggle medicine active status
+export const toggleMedicineStatus = mutation({
+  args: { id: v.id("medicines"), isActive: v.boolean() },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    const medicine = await ctx.db.get(args.id);
+    if (!medicine) {
+      throw new Error("Medicine not found");
+    }
+
+    if (medicine.manufacturerId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
+    await ctx.db.patch(args.id, { isActive: args.isActive });
+  },
+});

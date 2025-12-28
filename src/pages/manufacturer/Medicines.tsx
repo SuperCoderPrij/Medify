@@ -1,7 +1,7 @@
 import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { motion } from "framer-motion";
-import { Box, Calendar, MoreVertical, Plus, Search } from "lucide-react";
+import { Box, Calendar, MoreVertical, Plus, Search, ExternalLink, Ban, CheckCircle, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,9 +20,34 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export default function ManufacturerMedicines() {
   const medicines = useQuery(api.medicines.getManufacturerMedicines);
+  const toggleStatus = useMutation(api.medicines.toggleMedicineStatus);
+  const [selectedMedicine, setSelectedMedicine] = useState<any>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
+  const handleToggleStatus = async (id: any, currentStatus: boolean) => {
+    try {
+      await toggleStatus({ id, isActive: !currentStatus });
+      toast.success(`Medicine ${!currentStatus ? "activated" : "deactivated"} successfully`);
+    } catch (error) {
+      toast.error("Failed to update status");
+      console.error(error);
+    }
+  };
+
+  const openBlockchain = (txHash: string) => {
+    if (!txHash) {
+        toast.error("No transaction hash available");
+        return;
+    }
+    // Using OKLink for Amoy testnet
+    window.open(`https://www.oklink.com/amoy/tx/${txHash}`, "_blank");
+  };
 
   return (
     <div className="space-y-8">
@@ -129,14 +154,38 @@ export default function ManufacturerMedicines() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-slate-900 border-slate-800 text-gray-300">
-                          <DropdownMenuItem className="hover:bg-slate-800 focus:bg-slate-800 cursor-pointer">
+                          <DropdownMenuItem 
+                            className="hover:bg-slate-800 focus:bg-slate-800 cursor-pointer"
+                            onClick={() => {
+                              setSelectedMedicine(medicine);
+                              setIsDetailsOpen(true);
+                            }}
+                          >
+                            <FileText className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-slate-800 focus:bg-slate-800 cursor-pointer">
+                          <DropdownMenuItem 
+                            className="hover:bg-slate-800 focus:bg-slate-800 cursor-pointer"
+                            onClick={() => openBlockchain(medicine.transactionHash)}
+                          >
+                            <ExternalLink className="mr-2 h-4 w-4" />
                             View on Blockchain
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-slate-800 focus:bg-slate-800 cursor-pointer text-red-400">
-                            Deactivate
+                          <DropdownMenuItem 
+                            className={`hover:bg-slate-800 focus:bg-slate-800 cursor-pointer ${medicine.isActive ? "text-red-400" : "text-green-400"}`}
+                            onClick={() => handleToggleStatus(medicine._id, medicine.isActive)}
+                          >
+                            {medicine.isActive ? (
+                              <>
+                                <Ban className="mr-2 h-4 w-4" />
+                                Deactivate
+                              </>
+                            ) : (
+                              <>
+                                <CheckCircle className="mr-2 h-4 w-4" />
+                                Activate
+                              </>
+                            )}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -148,6 +197,92 @@ export default function ManufacturerMedicines() {
           </Table>
         </div>
       </motion.div>
+
+      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+        <DialogContent className="bg-slate-900 border-slate-800 text-white max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold flex items-center gap-2">
+              <Box className="h-5 w-5 text-cyan-400" />
+              Medicine Details
+            </DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Full details for {selectedMedicine?.medicineName}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedMedicine && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs text-gray-500 uppercase tracking-wider">Medicine Name</label>
+                  <div className="font-medium text-lg">{selectedMedicine.medicineName}</div>
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 uppercase tracking-wider">Batch Number</label>
+                  <div className="font-mono text-cyan-400">{selectedMedicine.batchNumber}</div>
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 uppercase tracking-wider">Type</label>
+                  <div className="capitalize">{selectedMedicine.medicineType}</div>
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 uppercase tracking-wider">Quantity</label>
+                  <div>{selectedMedicine.quantity} units</div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs text-gray-500 uppercase tracking-wider">Manufacturing Date</label>
+                  <div>{selectedMedicine.manufacturingDate}</div>
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 uppercase tracking-wider">Expiry Date</label>
+                  <div className="text-red-300">{selectedMedicine.expiryDate}</div>
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 uppercase tracking-wider">MRP</label>
+                  <div>${selectedMedicine.mrp}</div>
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 uppercase tracking-wider">Status</label>
+                  <Badge
+                    variant="outline"
+                    className={
+                      selectedMedicine.isActive
+                        ? "bg-green-500/10 text-green-400 border-green-500/20"
+                        : "bg-red-500/10 text-red-400 border-red-500/20"
+                    }
+                  >
+                    {selectedMedicine.isActive ? "Active" : "Inactive"}
+                  </Badge>
+                </div>
+              </div>
+
+              <div className="col-span-1 md:col-span-2 space-y-4 pt-4 border-t border-slate-800">
+                <div>
+                  <label className="text-xs text-gray-500 uppercase tracking-wider">Token ID</label>
+                  <div className="font-mono text-xs bg-slate-950 p-2 rounded border border-slate-800 text-gray-300">
+                    {selectedMedicine.tokenId}
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 uppercase tracking-wider">Transaction Hash</label>
+                  <div className="font-mono text-xs bg-slate-950 p-2 rounded border border-slate-800 text-gray-300 break-all">
+                    {selectedMedicine.transactionHash}
+                  </div>
+                </div>
+                 <div>
+                  <label className="text-xs text-gray-500 uppercase tracking-wider">Contract Address</label>
+                  <div className="font-mono text-xs bg-slate-950 p-2 rounded border border-slate-800 text-gray-300 break-all">
+                    {selectedMedicine.contractAddress}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
