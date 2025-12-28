@@ -1,1 +1,1 @@
-pnpm add jszip file-saver @types/file-saver @types/jszip
+pnpm install && npx convex dev --once && npx tsc -b --noEmit
