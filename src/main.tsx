@@ -17,6 +17,10 @@ const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 // Manufacturer Pages
 const ManufacturerLayout = lazy(() => import("./pages/manufacturer/ManufacturerLayout.tsx"));
 const ManufacturerDashboard = lazy(() => import("./pages/manufacturer/Dashboard.tsx"));
+const ManufacturerMedicines = lazy(() => import("./pages/manufacturer/Medicines.tsx"));
+const CreateMedicine = lazy(() => import("./pages/manufacturer/CreateMedicine.tsx"));
+const ManufacturerReports = lazy(() => import("./pages/manufacturer/Reports.tsx"));
+const ConsumerDashboard = lazy(() => import("./pages/consumer/Dashboard.tsx"));
 
 // Simple loading fallback for route transitions
 function RouteLoading() {
@@ -67,11 +71,16 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/" element={<Landing />} />
               <Route path="/auth" element={<AuthPage redirectAfterAuth="/" />} /> {/* TODO: change redirect after auth to correct page */}
               
+              {/* Consumer Routes */}
+              <Route path="/app" element={<ConsumerDashboard />} />
+
               {/* Manufacturer Routes */}
               <Route path="/manufacturer" element={<ManufacturerLayout />}>
                 <Route index element={<ManufacturerDashboard />} />
                 <Route path="dashboard" element={<ManufacturerDashboard />} />
-                {/* Add more routes here later */}
+                <Route path="medicines" element={<ManufacturerMedicines />} />
+                <Route path="create" element={<CreateMedicine />} />
+                <Route path="reports" element={<ManufacturerReports />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />

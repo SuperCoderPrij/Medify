@@ -6,13 +6,17 @@ import { useAuth } from "@/hooks/use-auth";
 
 export default function Landing() {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
 
   const handleGetStarted = () => {
     if (isAuthenticated) {
-      navigate("/app");
+      if (user?.role === "manufacturer") {
+        navigate("/manufacturer");
+      } else {
+        navigate("/app");
+      }
     } else {
-      navigate("/auth");
+      navigate("/auth?redirect=/app");
     }
   };
 
@@ -49,7 +53,7 @@ export default function Landing() {
                 disabled={isLoading}
                 className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-300"
               >
-                {isLoading ? "Loading..." : isAuthenticated ? "Dashboard" : "Get Started"}
+                {isLoading ? "Loading..." : isAuthenticated ? (user?.role === "manufacturer" ? "Manufacturer Portal" : "Dashboard") : "Get Started"}
                 <Zap className="ml-2 h-4 w-4" />
               </Button>
             </motion.div>
