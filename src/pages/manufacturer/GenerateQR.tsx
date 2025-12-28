@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { ethers } from "ethers";
 import { QRCodeCanvas } from "qrcode.react";
 import { motion } from "framer-motion";
-import { QrCode, Search, Loader2, Copy, Download, Box, Layers } from "lucide-react";
+import { QrCode, Search, Loader2, Copy, Download, Box, Layers, FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -125,6 +125,28 @@ export default function GenerateQR() {
     toast.success("URL copied to clipboard");
   };
 
+  const downloadSingleQR = (tokenId: string, fileName: string) => {
+    const canvas = document.getElementById(`qr-canvas-${tokenId}`) as HTMLCanvasElement;
+    if (canvas) {
+      try {
+        const dataUrl = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.href = dataUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        // No need to revoke data URLs immediately, they are just strings
+        toast.success("QR Code downloaded");
+      } catch (e) {
+        console.error("Download failed", e);
+        toast.error("Failed to download QR code");
+      }
+    } else {
+      toast.error("QR Code not rendered yet");
+    }
+  };
+
   const downloadBatchQRs = async () => {
     if (!medicineUnits || medicineUnits.length === 0) return;
     
@@ -165,6 +187,11 @@ export default function GenerateQR() {
       }
 
       const content = await zip.generateAsync({ type: "blob" });
+      
+      if (content.size === 0) {
+        throw new Error("Generated zip file is empty");
+      }
+
       const fileName = `batch-${selectedMedicineId}-qrs.zip`;
       
       // Direct download using anchor tag
@@ -177,11 +204,11 @@ export default function GenerateQR() {
       
       link.click();
       
-      // Cleanup after a short delay
+      // Cleanup after a longer delay to ensure download starts
       setTimeout(() => {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
-      }, 100);
+      }, 2000);
       
       toast.success("Download started", {
         description: `${count} QR codes zipped.`
@@ -259,13 +286,13 @@ export default function GenerateQR() {
                       ) : (
                         <Download className="mr-2 h-4 w-4" />
                       )}
-                      Download All QRs
+                      Download All QRs (ZIP)
                     </Button>
                   </div>
 
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {medicineUnits.map((unit) => (
-                      <div key={unit._id} className="bg-slate-950/50 p-4 rounded-lg border border-slate-800 flex flex-col items-center gap-3">
+                      <div key={unit._id} className="bg-slate-950/50 p-4 rounded-lg border border-slate-800 flex flex-col items-center gap-3 group relative">
                         <div className="bg-white p-2 rounded">
                           <QRCodeCanvas
                             id={`qr-canvas-${unit.tokenId}`}
@@ -281,6 +308,17 @@ export default function GenerateQR() {
                           </div>
                           <div className="text-xs text-cyan-500">Unit #{unit.serialNumber}</div>
                         </div>
+                        
+                        {/* Individual Download Button */}
+                        <Button
+                          size="icon"
+                          variant="secondary"
+                          className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 hover:bg-cyan-600 text-white border border-slate-700"
+                          onClick={() => downloadSingleQR(unit.tokenId, `qr-${unit.tokenId}.png`)}
+                          title="Download PNG"
+                        >
+                          <FileDown className="h-4 w-4" />
+                        </Button>
                       </div>
                     ))}
                   </div>
