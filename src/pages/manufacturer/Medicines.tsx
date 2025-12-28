@@ -349,18 +349,26 @@ export default function ManufacturerMedicines() {
                 </div>
                  <div>
                   <label className="text-xs text-gray-500 uppercase tracking-wider">Contract Address</label>
-                  <div className="flex items-center gap-2">
-                    <div className="font-mono text-xs bg-slate-950 p-2 rounded border border-slate-800 text-gray-300 flex-1 break-all">
-                      {selectedMedicine.contractAddress}
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <div className="font-mono text-xs bg-slate-950 p-2 rounded border border-slate-800 text-gray-300 flex-1 break-all">
+                        {selectedMedicine.contractAddress}
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-gray-400 hover:text-white"
+                        onClick={() => copyToClipboard(selectedMedicine.contractAddress, "Contract Address")}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
                     </div>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-8 w-8 text-gray-400 hover:text-white"
-                      onClick={() => copyToClipboard(selectedMedicine.contractAddress, "Contract Address")}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
+                    {selectedMedicine.contractAddress && selectedMedicine.contractAddress.length < 42 && (
+                      <div className="text-xs text-amber-500 flex items-center gap-1">
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                        Warning: This address appears to be truncated.
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
