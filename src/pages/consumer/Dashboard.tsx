@@ -152,12 +152,10 @@ export default function ConsumerDashboard() {
                     <DialogTitle>Scan Medicine QR</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
-                    <div className="aspect-square bg-black rounded-lg flex items-center justify-center border-2 border-cyan-500/30 relative overflow-hidden">
-                      <QRScanner 
-                        onScanSuccess={handleScanSuccess} 
-                        onScanFailure={(err) => console.log(err)}
-                      />
-                    </div>
+                    <QRScanner 
+                      onScanSuccess={handleScanSuccess} 
+                      onScanFailure={(err) => console.log(err)}
+                    />
                     <div className="space-y-2">
                       <p className="text-sm text-gray-400">Or enter QR Data / Batch ID manually:</p>
                       <div className="flex gap-2">

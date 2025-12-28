@@ -196,7 +196,7 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
 
   return (
     <div className="w-full flex flex-col gap-4">
-      <div className="relative bg-slate-900 rounded-lg overflow-hidden h-[400px] w-full border-2 border-cyan-500/30 shadow-inner group">
+      <div className="relative bg-slate-900 rounded-lg overflow-hidden h-[300px] w-full border-2 border-cyan-500/30 shadow-inner group">
         <div id={elementId} className="w-full h-full" />
         
         {isLoading && (
@@ -234,25 +234,25 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
                 </div>
             </div>
         )}
+      </div>
 
-        {/* Floating Upload Button */}
-        <div className="absolute bottom-6 left-0 right-0 flex justify-center z-20 px-4">
-            <input 
-                type="file" 
-                ref={fileInputRef} 
-                className="hidden" 
-                accept="image/*" 
-                onChange={handleFileUpload}
-            />
-            <Button 
-                variant="secondary" 
-                className="w-full max-w-xs bg-slate-900/80 backdrop-blur-md text-white hover:bg-slate-800 border border-cyan-500/30 shadow-lg transition-all hover:scale-105"
-                onClick={() => fileInputRef.current?.click()}
-            >
-                <Image className="mr-2 h-4 w-4 text-cyan-400" />
-                Upload Image to Scan
-            </Button>
-        </div>
+      {/* Upload Button - Moved Outside */}
+      <div className="flex justify-center w-full">
+          <input 
+              type="file" 
+              ref={fileInputRef} 
+              className="hidden" 
+              accept="image/*" 
+              onChange={handleFileUpload}
+          />
+          <Button 
+              variant="secondary" 
+              className="w-full bg-slate-900/80 backdrop-blur-md text-white hover:bg-slate-800 border border-cyan-500/30 shadow-lg transition-all hover:scale-105"
+              onClick={() => fileInputRef.current?.click()}
+          >
+              <Image className="mr-2 h-4 w-4 text-cyan-400" />
+              Upload Image to Scan
+          </Button>
       </div>
     </div>
   );
