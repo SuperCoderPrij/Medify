@@ -19,8 +19,10 @@ const ManufacturerLayout = lazy(() => import("./pages/manufacturer/ManufacturerL
 const ManufacturerDashboard = lazy(() => import("./pages/manufacturer/Dashboard.tsx"));
 const ManufacturerMedicines = lazy(() => import("./pages/manufacturer/Medicines.tsx"));
 const CreateMedicine = lazy(() => import("./pages/manufacturer/CreateMedicine.tsx"));
+const GenerateQR = lazy(() => import("./pages/manufacturer/GenerateQR.tsx"));
 const ManufacturerReports = lazy(() => import("./pages/manufacturer/Reports.tsx"));
 const ConsumerDashboard = lazy(() => import("./pages/consumer/Dashboard.tsx"));
+const Verify = lazy(() => import("./pages/Verify.tsx"));
 
 // Simple loading fallback for route transitions
 function RouteLoading() {
@@ -70,6 +72,7 @@ createRoot(document.getElementById("root")!).render(
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/auth" element={<AuthPage redirectAfterAuth="/" />} /> {/* TODO: change redirect after auth to correct page */}
+              <Route path="/verify" element={<Verify />} />
               
               {/* Consumer Routes */}
               <Route path="/app" element={<ConsumerDashboard />} />
@@ -80,6 +83,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="dashboard" element={<ManufacturerDashboard />} />
                 <Route path="medicines" element={<ManufacturerMedicines />} />
                 <Route path="create" element={<CreateMedicine />} />
+                <Route path="generate-qr" element={<GenerateQR />} />
                 <Route path="reports" element={<ManufacturerReports />} />
               </Route>
 

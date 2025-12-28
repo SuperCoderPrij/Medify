@@ -1,1 +1,1 @@
-pnpm install
+pnpm add -D @types/qrcode.react && pnpm add html5-qrcode

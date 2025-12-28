@@ -10,7 +10,8 @@ import {
   PlusCircle,
   Shield,
   Wallet,
-  X
+  X,
+  QrCode
 } from "lucide-react";
 import { useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router";
@@ -53,6 +54,11 @@ export default function ManufacturerLayout() {
       title: "Mint New Medicine",
       href: "/manufacturer/create",
       icon: PlusCircle,
+    },
+    {
+      title: "Generate QR",
+      href: "/manufacturer/generate-qr",
+      icon: QrCode,
     },
     {
       title: "Reports",

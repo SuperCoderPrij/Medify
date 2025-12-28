@@ -3,10 +3,14 @@ import { Shield, Scan, Lock, Zap, CheckCircle, AlertTriangle } from "lucide-reac
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
 import { useAuth } from "@/hooks/use-auth";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import QRScanner from "@/components/QRScanner";
+import { useState } from "react";
 
 export default function Landing() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, user } = useAuth();
+  const [isScanOpen, setIsScanOpen] = useState(false);
 
   const handleGetStarted = () => {
     if (isAuthenticated) {
@@ -17,6 +21,17 @@ export default function Landing() {
       }
     } else {
       navigate("/auth?redirect=/app");
+    }
+  };
+
+  const handleScanSuccess = (decodedText: string) => {
+    setIsScanOpen(false);
+    if (decodedText.includes("/verify?")) {
+      window.location.href = decodedText;
+    } else {
+      // If it's not a URL, maybe redirect to app with the code?
+      // For now, just redirect to app
+      navigate("/app");
     }
   };
 
@@ -83,14 +98,25 @@ export default function Landing() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button
-                onClick={handleGetStarted}
-                size="lg"
-                className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_30px_rgba(34,211,238,0.4)] hover:shadow-[0_0_40px_rgba(34,211,238,0.6)] transition-all duration-300 text-lg px-8 py-6"
-              >
-                <Scan className="mr-2 h-5 w-5" />
-                Scan Medicine Now
-              </Button>
+              <Dialog open={isScanOpen} onOpenChange={setIsScanOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    size="lg"
+                    className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_30px_rgba(34,211,238,0.4)] hover:shadow-[0_0_40px_rgba(34,211,238,0.6)] transition-all duration-300 text-lg px-8 py-6"
+                  >
+                    <Scan className="mr-2 h-5 w-5" />
+                    Scan Medicine Now
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="bg-slate-900 border-slate-800 text-white sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Scan Medicine QR</DialogTitle>
+                  </DialogHeader>
+                  <div className="aspect-square bg-black rounded-lg flex items-center justify-center border-2 border-cyan-500/30 relative overflow-hidden">
+                    <QRScanner onScanSuccess={handleScanSuccess} />
+                  </div>
+                </DialogContent>
+              </Dialog>
               
               <Button
                 onClick={() => navigate("/manufacturer")}

@@ -10,18 +10,52 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import QRScanner from "@/components/QRScanner";
 
 export default function ConsumerDashboard() {
   const { user } = useAuth();
   const [isScanning, setIsScanning] = useState(false);
   const [manualCode, setManualCode] = useState("");
   const [scanResult, setScanResult] = useState<any>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   const scanHistory = useQuery(api.scans.getUserScanHistory, { limit: 10 });
   const recordScan = useMutation(api.scans.recordScan);
   const getMedicineByQR = useQuery(api.medicines.getMedicineByQRCode, 
     manualCode ? { qrCodeData: manualCode } : "skip"
   );
+
+  // Handle successful scan from QRScanner
+  const handleScanSuccess = async (decodedText: string) => {
+    console.log("Scanned:", decodedText);
+    
+    // Check if it's a verification URL
+    if (decodedText.includes("/verify?")) {
+      window.location.href = decodedText;
+      return;
+    }
+
+    // Otherwise treat as raw data (legacy/manual format)
+    setManualCode(decodedText);
+    // The useEffect or manual trigger will handle the rest, but let's trigger verification directly
+    // We need to wait for the query to update if we rely on manualCode state, 
+    // but for immediate feedback we might want to parse it if it's JSON
+    try {
+        const parsed = JSON.parse(decodedText);
+        // If it's our JSON format
+        if (parsed.id) {
+            // It's likely our internal format
+            // We can set manualCode to trigger the query
+            setManualCode(decodedText);
+        }
+    } catch (e) {
+        // Not JSON, maybe just an ID
+        setManualCode(decodedText);
+    }
+    
+    setIsDialogOpen(false);
+    toast.success("QR Code Scanned!");
+  };
 
   const handleSimulateScan = async () => {
     setIsScanning(true);
@@ -106,7 +140,7 @@ export default function ConsumerDashboard() {
                 <p className="text-sm text-gray-400">Point your camera at the QR code on the medicine pack</p>
               </div>
 
-              <Dialog>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white py-6 text-lg shadow-[0_0_20px_rgba(34,211,238,0.3)]">
                     <Camera className="mr-2 h-5 w-5" />
@@ -115,15 +149,17 @@ export default function ConsumerDashboard() {
                 </DialogTrigger>
                 <DialogContent className="bg-slate-900 border-slate-800 text-white sm:max-w-md">
                   <DialogHeader>
-                    <DialogTitle>Simulate Scan</DialogTitle>
+                    <DialogTitle>Scan Medicine QR</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="aspect-square bg-black rounded-lg flex items-center justify-center border-2 border-cyan-500/30 relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent animate-scan" />
-                      <p className="text-gray-500">Camera Feed Simulation</p>
+                      <QRScanner 
+                        onScanSuccess={handleScanSuccess} 
+                        onScanFailure={(err) => console.log(err)}
+                      />
                     </div>
                     <div className="space-y-2">
-                      <p className="text-sm text-gray-400">Enter QR Data / Batch Number manually for testing:</p>
+                      <p className="text-sm text-gray-400">Or enter QR Data / Batch ID manually:</p>
                       <div className="flex gap-2">
                         <Input 
                           value={manualCode}
@@ -132,7 +168,7 @@ export default function ConsumerDashboard() {
                           className="bg-slate-950 border-slate-800"
                         />
                         <Button onClick={handleSimulateScan} disabled={isScanning}>
-                          {isScanning ? "Scanning..." : "Verify"}
+                          {isScanning ? "Verifying..." : "Verify"}
                         </Button>
                       </div>
                     </div>
