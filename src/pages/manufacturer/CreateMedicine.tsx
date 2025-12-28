@@ -17,16 +17,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useWeb3 } from "@/hooks/use-web3";
 
 export default function CreateMedicine() {
   const navigate = useNavigate();
   const createMedicine = useMutation(api.medicines.createMedicine);
   const user = useQuery(api.users.currentUser);
+  const { account, connectWallet } = useWeb3();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!user) return;
+
+    if (!account) {
+      toast.error("Wallet not connected", {
+        description: "Please connect your MetaMask wallet to mint NFTs."
+      });
+      connectWallet();
+      return;
+    }
 
     setIsSubmitting(true);
     const formData = new FormData(e.currentTarget);
@@ -58,7 +68,7 @@ export default function CreateMedicine() {
       });
 
       toast.success("Medicine Minted Successfully", {
-        description: `Token ID: ${tokenId} has been created on the blockchain.`,
+        description: `Token ID: ${tokenId} has been created on the blockchain using wallet ${account.slice(0, 6)}...`
       });
       navigate("/manufacturer/medicines");
     } catch (error) {
@@ -86,6 +96,29 @@ export default function CreateMedicine() {
           <p className="text-gray-400">Create a digital twin NFT for your medicine batch</p>
         </div>
       </motion.div>
+
+      {!account && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 flex items-center justify-between"
+        >
+          <div className="flex items-center gap-3">
+            <Shield className="h-5 w-5 text-yellow-400" />
+            <div>
+              <h3 className="font-medium text-yellow-400">Wallet Connection Required</h3>
+              <p className="text-sm text-yellow-400/80">You need to connect your MetaMask wallet to mint NFTs.</p>
+            </div>
+          </div>
+          <Button 
+            onClick={connectWallet}
+            variant="outline" 
+            className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10"
+          >
+            Connect Wallet
+          </Button>
+        </motion.div>
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -185,8 +218,8 @@ export default function CreateMedicine() {
               <div className="pt-4 border-t border-slate-800">
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white py-6 text-lg font-semibold shadow-[0_0_20px_rgba(34,211,238,0.3)]"
+                  disabled={isSubmitting || !account}
+                  className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white py-6 text-lg font-semibold shadow-[0_0_20px_rgba(34,211,238,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <>

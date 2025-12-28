@@ -9,15 +9,18 @@ import {
   Menu,
   PlusCircle,
   Shield,
+  Wallet,
   X
 } from "lucide-react";
 import { useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { useWeb3 } from "@/hooks/use-web3";
 
 export default function ManufacturerLayout() {
   const { isAuthenticated, isLoading, signOut, user } = useAuth();
+  const { account, connectWallet, isConnecting } = useWeb3();
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -165,6 +168,39 @@ export default function ManufacturerLayout() {
         </div>
 
         <div className="p-4 border-t border-cyan-500/20">
+          {/* Wallet Connection */}
+          <div className="mb-4">
+            {account ? (
+              <div className={cn(
+                "p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center gap-3",
+                !isSidebarOpen && "justify-center p-2"
+              )}>
+                <Wallet className="h-5 w-5 text-cyan-400 shrink-0" />
+                {isSidebarOpen && (
+                  <div className="overflow-hidden">
+                    <div className="text-xs text-cyan-400 font-medium">Connected</div>
+                    <div className="text-xs text-gray-400 truncate" title={account}>
+                      {account.slice(0, 6)}...{account.slice(-4)}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 hover:text-cyan-300",
+                  !isSidebarOpen && "px-0 justify-center"
+                )}
+                onClick={connectWallet}
+                disabled={isConnecting}
+              >
+                <Wallet className={cn("h-5 w-5", isSidebarOpen && "mr-2")} />
+                {isSidebarOpen && (isConnecting ? "Connecting..." : "Connect Wallet")}
+              </Button>
+            )}
+          </div>
+
           <div className={cn("flex items-center gap-3 mb-4", !isSidebarOpen && "justify-center")}>
             <div className="h-10 w-10 rounded-full bg-gradient-to-br from-cyan-500 to-purple-500 flex items-center justify-center text-white font-bold shrink-0">
               {user?.name?.[0] || "M"}
