@@ -350,7 +350,7 @@ export default function ManufacturerMedicines() {
                  <div>
                   <label className="text-xs text-gray-500 uppercase tracking-wider">Contract Address</label>
                   <div className="flex items-center gap-2">
-                    <div className="font-mono text-xs bg-slate-950 p-2 rounded border border-slate-800 text-gray-300 flex-1 overflow-hidden text-ellipsis">
+                    <div className="font-mono text-xs bg-slate-950 p-2 rounded border border-slate-800 text-gray-300 flex-1 break-all">
                       {selectedMedicine.contractAddress}
                     </div>
                     <Button 
