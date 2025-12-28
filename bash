@@ -1,1 +1,1 @@
-pnpm add ethers
+pnpm install
