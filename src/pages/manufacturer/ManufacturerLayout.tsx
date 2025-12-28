@@ -17,6 +17,7 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWeb3 } from "@/hooks/use-web3";
+import { useEffect } from "react";
 
 export default function ManufacturerLayout() {
   const { isAuthenticated, isLoading, signOut, user } = useAuth();
@@ -27,8 +28,13 @@ export default function ManufacturerLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Redirect if not authenticated
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate("/auth");
+    }
+  }, [isLoading, isAuthenticated, navigate]);
+
   if (!isLoading && !isAuthenticated) {
-    navigate("/auth");
     return null;
   }
 
