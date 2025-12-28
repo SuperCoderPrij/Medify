@@ -14,6 +14,10 @@ const Landing = lazy(() => import("./pages/Landing.tsx"));
 const AuthPage = lazy(() => import("./pages/Auth.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
+// Manufacturer Pages
+const ManufacturerLayout = lazy(() => import("./pages/manufacturer/ManufacturerLayout.tsx"));
+const ManufacturerDashboard = lazy(() => import("./pages/manufacturer/Dashboard.tsx"));
+
 // Simple loading fallback for route transitions
 function RouteLoading() {
   return (
@@ -62,6 +66,14 @@ createRoot(document.getElementById("root")!).render(
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/auth" element={<AuthPage redirectAfterAuth="/" />} /> {/* TODO: change redirect after auth to correct page */}
+              
+              {/* Manufacturer Routes */}
+              <Route path="/manufacturer" element={<ManufacturerLayout />}>
+                <Route index element={<ManufacturerDashboard />} />
+                <Route path="dashboard" element={<ManufacturerDashboard />} />
+                {/* Add more routes here later */}
+              </Route>
+
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
