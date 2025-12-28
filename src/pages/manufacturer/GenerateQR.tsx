@@ -27,8 +27,21 @@ export default function GenerateQR() {
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!contractAddress || !tokenId) {
+    
+    // Trim inputs to remove accidental whitespace
+    const cleanAddress = contractAddress.trim();
+    const cleanTokenId = tokenId.trim();
+
+    if (!cleanAddress || !cleanTokenId) {
       toast.error("Please fill in all fields");
+      return;
+    }
+
+    // Validate address format to prevent ENS resolution attempts on unsupported networks
+    if (!ethers.isAddress(cleanAddress)) {
+      toast.error("Invalid Contract Address", {
+        description: "Please enter a valid hexadecimal address (e.g., 0x...)"
+      });
       return;
     }
 
@@ -38,28 +51,36 @@ export default function GenerateQR() {
     try {
       // Use provided provider or fallback to public RPC
       const rpcProvider = provider || new ethers.JsonRpcProvider("https://rpc-amoy.polygon.technology/");
-      const contract = new ethers.Contract(contractAddress, ERC721_ABI, rpcProvider);
+      const contract = new ethers.Contract(cleanAddress, ERC721_ABI, rpcProvider);
 
       // Verify NFT exists by fetching owner
-      const owner = await contract.ownerOf(tokenId);
+      const owner = await contract.ownerOf(cleanTokenId);
       const name = await contract.name().catch(() => "Unknown Collection");
 
-      const url = `${window.location.origin}/verify?contract=${contractAddress}&tokenId=${tokenId}`;
+      const url = `${window.location.origin}/verify?contract=${cleanAddress}&tokenId=${cleanTokenId}`;
       setVerificationUrl(url);
       
       setGeneratedData({
         name,
         owner,
-        contractAddress,
-        tokenId
+        contractAddress: cleanAddress,
+        tokenId: cleanTokenId
       });
       
       toast.success("QR Code Generated Successfully");
     } catch (error: any) {
       console.error(error);
-      toast.error("Failed to fetch NFT data", {
-        description: "Check the contract address and token ID, or ensure you are on the correct network."
-      });
+      
+      // Handle specific errors
+      if (error.code === 'UNSUPPORTED_OPERATION' && error.operation === 'getEnsAddress') {
+         toast.error("Network Error", {
+            description: "Could not resolve address. Please ensure the contract address is a valid hexadecimal address."
+         });
+      } else {
+        toast.error("Failed to fetch NFT data", {
+            description: "Check the contract address and token ID, or ensure you are on the correct network."
+        });
+      }
     } finally {
       setLoading(false);
     }
