@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Image, Loader2, RefreshCw, Camera, AlertCircle } from "lucide-react";
+import { Image, Loader2, RefreshCw, AlertCircle } from "lucide-react";
+import { Html5Qrcode } from "html5-qrcode";
 
 interface QRScannerProps {
   onScanSuccess: (decodedText: string, decodedResult: any) => void;
@@ -8,17 +9,17 @@ interface QRScannerProps {
 }
 
 export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerProps) {
-  const scannerRef = useRef<any>(null);
+  const scannerRef = useRef<Html5Qrcode | null>(null);
   const [scanError, setScanError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   // Use a unique ID for each instance to avoid conflicts
   const [elementId] = useState(() => `qr-reader-${Math.random().toString(36).substr(2, 9)}`);
-  const initializationRef = useRef<Promise<void> | null>(null);
+  const initializationRef = useRef<Promise<any> | null>(null);
 
   useEffect(() => {
     let isMounted = true;
-    let html5QrCode: any;
+    let html5QrCode: Html5Qrcode | null = null;
 
     const initScanner = async () => {
       // Ensure element exists
@@ -41,14 +42,23 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
             throw new Error("Camera not supported in this browser.");
         }
-        
-        // Use global window.Html5Qrcode from CDN
-        if (!window.Html5Qrcode) {
-            throw new Error("Scanner library not loaded");
-        }
 
-        // Create new instance
-        html5QrCode = new window.Html5Qrcode(elementId);
+        // Explicitly check for cameras first to trigger permission prompt if needed
+        try {
+            const devices = await Html5Qrcode.getCameras();
+            if (!devices || devices.length === 0) {
+                throw new Error("No camera devices found.");
+            }
+        } catch (e: any) {
+            // If getCameras fails, it might be permission denied
+            if (e?.name === "NotAllowedError" || e?.message?.includes("permission")) {
+                throw new Error("Camera permission denied. Please allow camera access.");
+            }
+            // Continue anyway to let start() try
+        }
+        
+        // Create new instance using the imported class
+        html5QrCode = new Html5Qrcode(elementId);
         scannerRef.current = html5QrCode;
 
         // Start the scanner with a timeout race
@@ -56,15 +66,24 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
           { facingMode: "environment" },
           { 
             fps: 10, 
-            qrbox: { width: 250, height: 250 },
-            aspectRatio: 1.0
+            // Make qrbox responsive to avoid OverconstrainedError on small screens
+            qrbox: (viewfinderWidth, viewfinderHeight) => {
+                const minEdgePercentage = 0.7; // 70%
+                const minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+                const qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
+                return {
+                    width: qrboxSize,
+                    height: qrboxSize
+                };
+            },
+            // Remove fixed aspectRatio to prevent constraints errors on some devices
+            // aspectRatio: 1.0 
           },
           (decodedText: string, decodedResult: any) => {
             if (isMounted) onScanSuccess(decodedText, decodedResult);
           },
           (errorMessage: string) => {
             // Only report critical errors or if explicitly requested
-            // Many errors are just "no QR code found" in the current frame
             // if (isMounted && onScanFailure) onScanFailure(errorMessage);
           }
         );
@@ -82,18 +101,29 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
         console.error("Error starting scanner:", err);
         if (isMounted) {
             setIsLoading(false);
-            // Only show error if it's a permission issue or critical failure
+            // Detailed error handling
+            let errorMessage = "Failed to start camera.";
+            
             if (err?.name === "NotAllowedError" || err?.message?.includes("permission")) {
-                setScanError("Camera permission denied. Please allow camera access in your browser settings.");
+                errorMessage = "Camera permission denied. Please allow camera access.";
             } else if (err?.name === "NotFoundError" || err?.message?.includes("device")) {
-                setScanError("No camera found on this device.");
+                errorMessage = "No camera found on this device.";
+            } else if (err?.name === "NotReadableError") {
+                errorMessage = "Camera is in use by another app or not readable.";
+            } else if (err?.name === "OverconstrainedError") {
+                errorMessage = "Camera constraints not satisfied (resolution/facing mode).";
             } else if (err?.message?.includes("timed out")) {
-                setScanError("Camera took too long to start. Please try again.");
+                errorMessage = "Camera took too long to start. Please try again.";
             } else if (err?.message?.includes("secure context")) {
-                setScanError(err.message);
+                errorMessage = err.message;
+            } else if (err?.message) {
+                // Show the actual error message for debugging
+                errorMessage = `Camera Error: ${err.message}`;
             } else {
-                setScanError("Failed to start camera. Please try uploading an image.");
+                errorMessage = "Failed to start camera. Please ensure camera access is allowed for this site in your browser settings, and try again.";
             }
+            
+            setScanError(errorMessage);
         }
       }
     };
@@ -111,30 +141,21 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
         scannerRef.current = null; // Prevent double cleanup
 
         // Use Promise.resolve to handle cases where stop() returns undefined or a promise
-        // and wrap in try-catch for synchronous errors
-        try {
-            // If initialization is still pending, we should wait or just try to stop
-            // Ideally we wait for start to finish before stopping, but here we just try to stop
-            Promise.resolve(scanner.stop())
-                .catch((e) => {
-                    console.warn("Failed to stop scanner during cleanup:", e);
-                })
-                .finally(() => {
-                    // Always try to clear
-                    try {
-                        scanner.clear().catch(() => {});
-                    } catch (e) {
-                        // Ignore clear errors
+        Promise.resolve(scanner.stop())
+            .catch((e) => {
+                console.warn("Failed to stop scanner during cleanup:", e);
+            })
+            .finally(() => {
+                try {
+                    // Cast to any to avoid TS errors if types are mismatched
+                    const clearPromise = scanner.clear() as any;
+                    if (clearPromise && typeof clearPromise.catch === 'function') {
+                        clearPromise.catch(() => {});
                     }
-                });
-        } catch (err) {
-            // If stop throws synchronously
-            try {
-                scanner.clear().catch(() => {});
-            } catch (e) {
-                // Ignore
-            }
-        }
+                } catch (e) {
+                    // Ignore clear errors
+                }
+            });
       }
     };
   }, [onScanSuccess, onScanFailure, elementId]);
@@ -144,17 +165,11 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
     
     const file = e.target.files[0];
     
-    if (!window.Html5Qrcode) {
-        setScanError("Scanner library not loaded.");
-        return;
-    }
-
     try {
         setIsLoading(true);
         setScanError(null);
         
-        // Create a temporary container for file scanning to avoid conflicts with camera
-        // This isolates the file scan from the active camera scanner
+        // Create a temporary container for file scanning
         const tempId = `temp-qr-${Math.random().toString(36).substr(2, 9)}`;
         const tempDiv = document.createElement('div');
         tempDiv.id = tempId;
@@ -162,11 +177,15 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
         document.body.appendChild(tempDiv);
 
         try {
-            const fileScanner = new window.Html5Qrcode(tempId);
+            // Use imported Html5Qrcode
+            const fileScanner = new Html5Qrcode(tempId);
             const result = await fileScanner.scanFile(file, true);
             onScanSuccess(result, null);
             // Cleanup file scanner
-            Promise.resolve(fileScanner.clear()).catch(() => {});
+            const clearPromise = fileScanner.clear() as any;
+            if (clearPromise && typeof clearPromise.catch === 'function') {
+                clearPromise.catch(() => {});
+            }
         } catch (err) {
              console.error("Error scanning file:", err);
              setScanError("Could not read QR code from image. Please try a clearer image.");
@@ -188,9 +207,6 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
   const handleRetry = () => {
     setScanError(null);
     setIsLoading(true);
-    // Force re-mount or reload
-    // Instead of full reload, we can try to re-run the effect by toggling a key in parent
-    // But here we just reload the page as a fallback
     window.location.reload();
   };
 
