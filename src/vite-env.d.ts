@@ -2,4 +2,5 @@
 
 interface Window {
   ethereum: any;
+  Html5Qrcode: any;
 }

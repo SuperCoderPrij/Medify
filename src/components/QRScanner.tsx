@@ -28,10 +28,12 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
         setIsLoading(true);
         setScanError(null);
         
-        // Dynamic import
-        const { Html5Qrcode } = await import("html5-qrcode");
-        
-        // Cleanup existing instance if any to prevent "Code scanner is already defined" error
+        // Use global window.Html5Qrcode from CDN
+        if (!window.Html5Qrcode) {
+            throw new Error("Scanner library not loaded");
+        }
+
+        // Cleanup existing instance if any
         if (scannerRef.current) {
             try {
                 await scannerRef.current.stop();
@@ -41,7 +43,7 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
             }
         }
 
-        html5QrCode = new Html5Qrcode(elementId);
+        html5QrCode = new window.Html5Qrcode(elementId);
         scannerRef.current = html5QrCode;
 
         await html5QrCode.start(
@@ -91,20 +93,26 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
     if (!e.target.files || e.target.files.length === 0) return;
     
     const file = e.target.files[0];
+    
+    if (!window.Html5Qrcode) {
+        setScanError("Scanner library not loaded.");
+        return;
+    }
+
     if (!scannerRef.current) {
-        // If scanner instance doesn't exist (e.g. failed to load), try to load lib just for file scan
         try {
-            const { Html5Qrcode } = await import("html5-qrcode");
-            scannerRef.current = new Html5Qrcode("qr-reader");
+            scannerRef.current = new window.Html5Qrcode("qr-reader");
         } catch (err) {
-            setScanError("Failed to load scanner library.");
-            return;
+            // If element doesn't exist or other error, we might fail to create instance
+            // But usually the element is there.
         }
     }
 
     try {
         setIsLoading(true);
-        const result = await scannerRef.current.scanFile(file, true);
+        // If we still don't have a scanner ref (e.g. camera init failed completely), create a temp one
+        const scanner = scannerRef.current || new window.Html5Qrcode("qr-reader");
+        const result = await scanner.scanFile(file, true);
         onScanSuccess(result, null);
     } catch (err) {
         console.error("Error scanning file:", err);
@@ -119,10 +127,6 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
   const handleRetry = () => {
     setScanError(null);
     setIsLoading(true);
-    // Force re-render/re-init by toggling a key or just reloading page if needed, 
-    // but here we rely on the effect running again if we could trigger it.
-    // For simplicity, we'll just reload the window if it's a hard failure, 
-    // or let the user try file upload.
     window.location.reload();
   };
 
