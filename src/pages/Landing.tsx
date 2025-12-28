@@ -108,7 +108,7 @@ export default function Landing() {
                     Scan Medicine Now
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-slate-900 border-slate-800 text-white sm:max-w-md">
+                <DialogContent className="bg-slate-900 border-slate-800 text-white sm:max-w-lg">
                   <DialogHeader>
                     <DialogTitle>Scan Medicine QR</DialogTitle>
                   </DialogHeader>

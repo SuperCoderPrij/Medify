@@ -166,7 +166,7 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
   };
 
   return (
-    <div className="w-full max-w-md mx-auto flex flex-col gap-4">
+    <div className="w-full flex flex-col gap-4">
       <div className="relative bg-black rounded-lg overflow-hidden min-h-[300px] w-full border-2 border-cyan-500/30 shadow-inner">
         <div id={elementId} className="w-full h-full min-h-[300px]" />
         
