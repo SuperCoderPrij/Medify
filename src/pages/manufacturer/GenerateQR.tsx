@@ -14,8 +14,6 @@ import { useWeb3 } from "@/hooks/use-web3";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import JSZip from "jszip";
-import { saveAs } from "file-saver";
 
 // Minimal ERC721 ABI
 const ERC721_ABI = [
@@ -54,9 +52,32 @@ export default function GenerateQR() {
       return;
     }
 
-    if (!cleanAddress.startsWith("0x") || cleanAddress.length !== 42 || !ethers.isAddress(cleanAddress)) {
-      toast.error("Invalid Contract Address", {
-        description: "Please enter a valid 42-character hexadecimal address."
+    console.log("Validating address:", cleanAddress);
+
+    if (cleanAddress.includes("...")) {
+      toast.error("Truncated Address Detected", {
+        description: "It looks like you pasted a truncated address. Please use the full address."
+      });
+      return;
+    }
+
+    if (!cleanAddress.startsWith("0x")) {
+      toast.error("Invalid Address Format", {
+        description: "Address must start with '0x'"
+      });
+      return;
+    }
+
+    if (cleanAddress.length !== 42) {
+      toast.error("Invalid Address Length", {
+        description: `Address must be 42 characters long. Current length: ${cleanAddress.length}`
+      });
+      return;
+    }
+
+    if (!ethers.isAddress(cleanAddress)) {
+      toast.error("Invalid Address", {
+        description: "The address is not a valid Ethereum address. Check for typos or checksum errors."
       });
       return;
     }
@@ -108,10 +129,15 @@ export default function GenerateQR() {
     if (!medicineUnits || medicineUnits.length === 0) return;
     
     setIsDownloading(true);
-    const zip = new JSZip();
-    const folder = zip.folder("qr-codes");
     
     try {
+      // Dynamically import libraries to avoid bundling issues
+      const JSZip = (await import("jszip")).default;
+      const { saveAs } = await import("file-saver");
+
+      const zip = new JSZip();
+      const folder = zip.folder("qr-codes");
+      
       // Generate QR for each unit
       for (const unit of medicineUnits) {
         const canvas = document.getElementById(`qr-canvas-${unit.tokenId}`) as HTMLCanvasElement;
