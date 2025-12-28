@@ -7,12 +7,14 @@ export const ROLES = {
   ADMIN: "admin",
   USER: "user",
   MEMBER: "member",
+  MANUFACTURER: "manufacturer",
 } as const;
 
 export const roleValidator = v.union(
   v.literal(ROLES.ADMIN),
   v.literal(ROLES.USER),
   v.literal(ROLES.MEMBER),
+  v.literal(ROLES.MANUFACTURER),
 );
 export type Role = Infer<typeof roleValidator>;
 
@@ -30,14 +32,71 @@ const schema = defineSchema(
       isAnonymous: v.optional(v.boolean()), // is the user anonymous. do not remove
 
       role: v.optional(roleValidator), // role of the user. do not remove
+      
+      // Additional fields for manufacturers
+      companyName: v.optional(v.string()),
+      walletAddress: v.optional(v.string()),
+      isVerified: v.optional(v.boolean()),
     }).index("email", ["email"]), // index for the email. do not remove or modify
 
-    // add other tables here
+    // Medicines table - stores NFT medicine data
+    medicines: defineTable({
+      tokenId: v.string(), // NFT token ID from blockchain
+      medicineName: v.string(),
+      manufacturerName: v.string(),
+      manufacturerId: v.id("users"),
+      batchNumber: v.string(),
+      medicineType: v.string(), // tablet, syrup, injection, etc.
+      manufacturingDate: v.string(),
+      expiryDate: v.string(),
+      mrp: v.number(),
+      quantity: v.number(),
+      qrCodeData: v.string(), // QR code content
+      transactionHash: v.string(), // Blockchain transaction hash
+      contractAddress: v.string(), // Smart contract address
+      isActive: v.boolean(),
+    })
+      .index("by_manufacturer", ["manufacturerId"])
+      .index("by_batch", ["batchNumber"])
+      .index("by_token_id", ["tokenId"]),
 
-    // tableName: defineTable({
-    //   ...
-    //   // table fields
-    // }).index("by_field", ["field"])
+    // Scan history - tracks all QR code scans
+    scanHistory: defineTable({
+      medicineId: v.id("medicines"),
+      userId: v.optional(v.id("users")),
+      scanResult: v.string(), // "genuine" or "counterfeit"
+      location: v.optional(v.string()),
+      deviceInfo: v.optional(v.string()),
+      ipAddress: v.optional(v.string()),
+    })
+      .index("by_medicine", ["medicineId"])
+      .index("by_user", ["userId"]),
+
+    // Counterfeit reports
+    reports: defineTable({
+      medicineId: v.optional(v.id("medicines")),
+      reporterId: v.optional(v.id("users")),
+      qrCodeData: v.string(),
+      reason: v.string(),
+      description: v.optional(v.string()),
+      location: v.optional(v.string()),
+      status: v.string(), // "pending", "reviewed", "resolved"
+      reviewedBy: v.optional(v.id("users")),
+      reviewNotes: v.optional(v.string()),
+    })
+      .index("by_status", ["status"])
+      .index("by_reporter", ["reporterId"]),
+
+    // Batches - for bulk medicine creation
+    batches: defineTable({
+      batchNumber: v.string(),
+      manufacturerId: v.id("users"),
+      medicineCount: v.number(),
+      status: v.string(), // "processing", "completed", "failed"
+      metadata: v.optional(v.string()), // JSON string with batch details
+    })
+      .index("by_manufacturer", ["manufacturerId"])
+      .index("by_batch_number", ["batchNumber"]),
   },
   {
     schemaValidation: false,
