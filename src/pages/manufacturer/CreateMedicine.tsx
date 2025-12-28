@@ -55,6 +55,7 @@ export default function CreateMedicine() {
 
       const tokenId = `NFT-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
       const transactionHash = `0x${Math.random().toString(16).substr(2, 40)}`;
+      const contractAddress = "0x71C95911E9a5D330f4D621842EC243EE134329A2"; // Mock contract address
       
       await createMedicine({
         medicineName: formData.get("medicineName") as string,
@@ -67,7 +68,7 @@ export default function CreateMedicine() {
         quantity: Number(formData.get("quantity")),
         tokenId: tokenId,
         transactionHash: transactionHash,
-        contractAddress: "0x71C...9A2", // Mock contract address
+        contractAddress: contractAddress,
         qrCodeData: JSON.stringify({
           id: tokenId,
           batch: formData.get("batchNumber"),
