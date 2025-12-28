@@ -22,7 +22,7 @@ import { useEffect } from "react";
 
 export default function ManufacturerLayout() {
   const { isAuthenticated, isLoading, signOut, user } = useAuth();
-  const { account, connectWallet, isConnecting } = useWeb3();
+  const { account, connectWallet, disconnectWallet, isConnecting } = useWeb3();
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -183,20 +183,24 @@ export default function ManufacturerLayout() {
           {/* Wallet Connection */}
           <div className="mb-4">
             {account ? (
-              <div className={cn(
-                "p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center gap-3",
-                !isSidebarOpen && "justify-center p-2"
-              )}>
-                <Wallet className="h-5 w-5 text-cyan-400 shrink-0" />
+              <Button
+                variant="ghost"
+                className={cn(
+                  "w-full p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center gap-3 h-auto hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-400 group transition-all",
+                  !isSidebarOpen && "justify-center p-2"
+                )}
+                onClick={disconnectWallet}
+              >
+                <Wallet className="h-5 w-5 text-cyan-400 group-hover:text-red-400 shrink-0" />
                 {isSidebarOpen && (
-                  <div className="overflow-hidden">
-                    <div className="text-xs text-cyan-400 font-medium">Connected</div>
-                    <div className="text-xs text-gray-400 truncate" title={account}>
+                  <div className="overflow-hidden text-left">
+                    <div className="text-xs text-cyan-400 group-hover:text-red-400 font-medium">Connected</div>
+                    <div className="text-xs text-gray-400 group-hover:text-red-300 truncate" title={account}>
                       {account.slice(0, 6)}...{account.slice(-4)}
                     </div>
                   </div>
                 )}
-              </div>
+              </Button>
             ) : (
               <Button
                 variant="outline"

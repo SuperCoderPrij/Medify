@@ -8,6 +8,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router";
 import "./index.css";
 import "./types/global.d.ts";
+import { Web3Provider } from "@/hooks/use-web3";
 
 // Lazy load route components for better code splitting
 const Landing = lazy(() => import("./pages/Landing.tsx"));
@@ -66,32 +67,34 @@ createRoot(document.getElementById("root")!).render(
     <VlyToolbar />
     <InstrumentationProvider>
       <ConvexAuthProvider client={convex}>
-        <BrowserRouter>
-          <RouteSyncer />
-          <Suspense fallback={<RouteLoading />}>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/auth" element={<AuthPage redirectAfterAuth="/" />} /> {/* TODO: change redirect after auth to correct page */}
-              <Route path="/verify" element={<Verify />} />
-              
-              {/* Consumer Routes */}
-              <Route path="/app" element={<ConsumerDashboard />} />
+        <Web3Provider>
+          <BrowserRouter>
+            <RouteSyncer />
+            <Suspense fallback={<RouteLoading />}>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/auth" element={<AuthPage redirectAfterAuth="/" />} /> {/* TODO: change redirect after auth to correct page */}
+                <Route path="/verify" element={<Verify />} />
+                
+                {/* Consumer Routes */}
+                <Route path="/app" element={<ConsumerDashboard />} />
 
-              {/* Manufacturer Routes */}
-              <Route path="/manufacturer" element={<ManufacturerLayout />}>
-                <Route index element={<ManufacturerDashboard />} />
-                <Route path="dashboard" element={<ManufacturerDashboard />} />
-                <Route path="medicines" element={<ManufacturerMedicines />} />
-                <Route path="create" element={<CreateMedicine />} />
-                <Route path="generate-qr" element={<GenerateQR />} />
-                <Route path="reports" element={<ManufacturerReports />} />
-              </Route>
+                {/* Manufacturer Routes */}
+                <Route path="/manufacturer" element={<ManufacturerLayout />}>
+                  <Route index element={<ManufacturerDashboard />} />
+                  <Route path="dashboard" element={<ManufacturerDashboard />} />
+                  <Route path="medicines" element={<ManufacturerMedicines />} />
+                  <Route path="create" element={<CreateMedicine />} />
+                  <Route path="generate-qr" element={<GenerateQR />} />
+                  <Route path="reports" element={<ManufacturerReports />} />
+                </Route>
 
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-        <Toaster />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+          <Toaster />
+        </Web3Provider>
       </ConvexAuthProvider>
     </InstrumentationProvider>
   </StrictMode>,
