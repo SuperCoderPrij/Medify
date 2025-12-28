@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Html5QrcodeScanner } from "html5-qrcode";
 
 interface QRScannerProps {
   onScanSuccess: (decodedText: string, decodedResult: any) => void;
@@ -8,66 +9,47 @@ interface QRScannerProps {
 export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerProps) {
   const scannerRef = useRef<any>(null);
   const [scanError, setScanError] = useState<string | null>(null);
-  const [libLoaded, setLibLoaded] = useState(false);
 
   useEffect(() => {
-    // Dynamic import to avoid module loading issues during initial bundle load
-    // We check if the module is available
-    import("html5-qrcode").then((mod) => {
-        console.log("html5-qrcode loaded", mod);
-        setLibLoaded(true);
-    }).catch(err => {
-        console.error("Failed to load html5-qrcode library", err);
-        setScanError("Failed to load scanner library. Please refresh.");
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!libLoaded) return;
-
-    // Use a unique ID for the element to avoid conflicts if multiple scanners exist (though unlikely here)
+    // Use a unique ID for the element
     const elementId = "html5qr-code-full-region";
     
     // Ensure the element exists in the DOM before initializing
     if (!document.getElementById(elementId)) return;
 
-    const startScanner = async () => {
-        try {
-            const { Html5QrcodeScanner } = await import("html5-qrcode");
+    try {
+        if (!scannerRef.current) {
+            const scanner = new Html5QrcodeScanner(
+                elementId,
+                { 
+                    fps: 10, 
+                    qrbox: { width: 250, height: 250 },
+                    aspectRatio: 1.0,
+                    showTorchButtonIfSupported: true,
+                },
+                /* verbose= */ false
+            );
+        
+            scanner.render(
+                (decodedText: string, decodedResult: any) => {
+                    // Stop scanning after success if needed, or just callback
+                    // We don't clear automatically to allow continuous scanning if needed, 
+                    // but usually for this app we want to stop.
+                    // Let the parent handle clearing/closing.
+                    onScanSuccess(decodedText, decodedResult);
+                },
+                (errorMessage: string) => {
+                    // parse error, ignore it.
+                    if (onScanFailure) onScanFailure(errorMessage);
+                }
+            );
             
-            if (!scannerRef.current) {
-                const scanner = new Html5QrcodeScanner(
-                    elementId,
-                    { 
-                        fps: 10, 
-                        qrbox: { width: 250, height: 250 },
-                        aspectRatio: 1.0,
-                        showTorchButtonIfSupported: true,
-                    },
-                    /* verbose= */ false
-                );
-            
-                scanner.render(
-                    (decodedText: string, decodedResult: any) => {
-                        // Stop scanning after success if needed, or just callback
-                        scanner.clear();
-                        onScanSuccess(decodedText, decodedResult);
-                    },
-                    (errorMessage: string) => {
-                        // parse error, ignore it.
-                        if (onScanFailure) onScanFailure(errorMessage);
-                    }
-                );
-                
-                scannerRef.current = scanner;
-            }
-        } catch (e) {
-            console.error("Error initializing scanner:", e);
-            setScanError("Failed to initialize camera.");
+            scannerRef.current = scanner;
         }
-    };
-
-    startScanner();
+    } catch (e) {
+        console.error("Error initializing scanner:", e);
+        setScanError("Failed to initialize camera.");
+    }
 
     return () => {
       if (scannerRef.current) {
@@ -81,7 +63,7 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
         scannerRef.current = null;
       }
     };
-  }, [libLoaded, onScanSuccess, onScanFailure]);
+  }, [onScanSuccess, onScanFailure]);
 
   return (
     <div className="w-full max-w-md mx-auto">

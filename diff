@@ -1,0 +1,61 @@
+--- a/src/components/QRScanner.tsx
++++ b/src/components/QRScanner.tsx
+@@ -1,6 +1,5 @@
+ import { useEffect, useRef, useState } from "react";
+-import { Html5QrcodeScanner } from "html5-qrcode";
+-
+ 
+ interface QRScannerProps {
+   onScanSuccess: (decodedText: string, decodedResult: any) => void;
+@@ -10,13 +9,29 @@
+ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerProps) {
+   const scannerRef = useRef<any>(null);
+   const [scanError, setScanError] = useState<string | null>(null);
++  const [Html5QrcodeScannerClass, setHtml5QrcodeScannerClass] = useState<any>(null); // State to hold the dynamically loaded class
+ 
+   useEffect(() => {
+-    // Use a unique ID for the element
++    // Dynamically import html5-qrcode
++    const loadHtml5Qrcode = async () => {
++      try {
++        const module = await import("html5-qrcode");
++        setHtml5QrcodeScannerClass(() => module.Html5QrcodeScanner); // Store the class
++      } catch (e) {
++        console.error("Error loading html5-qrcode:", e);
++        setScanError("Failed to load QR scanner library.");
++      }
++    };
++
++    if (!Html5QrcodeScannerClass) { // Only load if not already loaded
++      loadHtml5Qrcode();
++    }
++  }, [Html5QrcodeScannerClass]); // Dependency on the loaded class state
++
++  useEffect(() => {
++    if (!Html5QrcodeScannerClass) return; // Only proceed if Html5QrcodeScannerClass is loaded
++
+     const elementId = "html5qr-code-full-region";
+-    
+-    // Ensure the element exists in the DOM before initializing
+-    if (!document.getElementById(elementId)) return;
+ 
+     try {\n-        if (!scannerRef.current) {
+-            const scanner = new Html5QrcodeScanner(
++        if (!scannerRef.current) {
++            const scanner = new Html5QrcodeScannerClass(
+                 elementId,
+                 { 
+                     fps: 10, 
+@@ -51,12 +66,13 @@
+         console.error("Error clearing scanner", e);\n        }\n        scannerRef.current = null;
+       }\n    };
+-  }, [onScanSuccess, onScanFailure]);
++  }, [Html5QrcodeScannerClass, onScanSuccess, onScanFailure]); // Add Html5QrcodeScannerClass to dependencies
+ 
+   return (
+     <div className=\"w-full max-w-md mx-auto\">
+       <div id=\"html5qr-code-full-region\" className=\"bg-slate-900 rounded-lg overflow-hidden min-h-[300px]\" />
+       {scanError && <p className=\"text-red-500 text-sm mt-2\">{scanError}</p>}\n+      {!Html5QrcodeScannerClass && !scanError && <p className=\"text-gray-400 text-sm mt-2\">Loading scanner...</p>}\n    </div>
+   );
+ }
+

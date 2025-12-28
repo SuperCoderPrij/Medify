@@ -1,36 +1,89 @@
-import { api } from "@/convex/_generated/api";
-import { useMutation, useQuery } from "convex/react";
-import { motion } from "framer-motion";
-import { AlertTriangle, Camera, CheckCircle, History, QrCode, Search, Shield, XCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import { toast } from "sonner";
-import { useAuth } from "@/hooks/use-auth";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
+// src/components/QRScanner.tsx
+import { useEffect, useRef, useState } from "react";
 
-export default function ConsumerDashboard() {
-  const { user } = useAuth();
-  const [isScanning, setIsScanning] = useState(false);
-  const [manualCode, setManualCode] = useState("");
-  const [scanResult, setScanResult] = useState<any>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // Add state for dialog
-  
-  const scanHistory = useQuery(api.scans.getUserScanHistory, { limit: 10 });
+interface QRScannerProps {
+  onScanSuccess: (decodedText: string, decodedResult: any) => void;
+  onScanFailure?: (error: any) => void;
+}
 
-  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-    <DialogTrigger asChild>
-      <Button ...>
-        <Camera ... />
-        Scan Now
-      </Button>
-    </DialogTrigger>
-    <DialogContent ...>
-      ...
-      <QRScanner ... />
-      ...
-    </DialogContent>
-  </Dialog>
+export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerProps) {
+  const scannerRef = useRef<any>(null);
+  const [scanError, setScanError] = useState<string | null>(null);
+  const [Html5QrcodeScannerClass, setHtml5QrcodeScannerClass] = useState<any>(null); // State to hold the dynamically loaded class
+
+  useEffect(() => {
+    // Dynamically import html5-qrcode
+    const loadHtml5Qrcode = async () => {
+      try {
+        const module = await import("html5-qrcode");
+        setHtml5QrcodeScannerClass(() => module.Html5QrcodeScanner); // Store the class
+      } catch (e) {
+        console.error("Error loading html5-qrcode:", e);
+        setScanError("Failed to load QR scanner library.");
+      }
+    };
+
+    if (!Html5QrcodeScannerClass) { // Only load if not already loaded
+      loadHtml5Qrcode();
+    }
+  }, [Html5QrcodeScannerClass]); // Dependency on the loaded class state
+
+  useEffect(() => {
+    if (!Html5QrcodeScannerClass) return; // Only proceed if Html5QrcodeScannerClass is loaded
+
+    const elementId = "html5qr-code-full-region";
+
+    // Ensure the element exists in the DOM before initializing
+    if (!document.getElementById(elementId)) return;
+
+    try {
+      if (!scannerRef.current) {
+        const scanner = new Html5QrcodeScannerClass( // Use the dynamically loaded class
+          elementId,
+          {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0,
+            showTorchButtonIfSupported: true,
+          },
+          /* verbose= */ false
+        );
+
+        scanner.render(
+          (decodedText: string, decodedResult: any) => {
+            onScanSuccess(decodedText, decodedResult);
+          },
+          (errorMessage: string) => {
+            if (onScanFailure) onScanFailure(errorMessage);
+          }
+        );
+
+        scannerRef.current = scanner;
+      }
+    } catch (e) {
+      console.error("Error initializing scanner:", e);
+      setScanError("Failed to initialize camera.");
+    }
+
+    return () => {
+      if (scannerRef.current) {
+        try {
+          scannerRef.current.clear().catch((error: any) => {
+            console.error("Failed to clear html5-qrcode scanner. ", error);
+          });
+        } catch (e) {
+          console.error("Error clearing scanner", e);
+        }
+        scannerRef.current = null;
+      }
+    };
+  }, [Html5QrcodeScannerClass, onScanSuccess, onScanFailure]); // Add Html5QrcodeScannerClass to dependencies
+
+  return (
+    <div className="w-full max-w-md mx-auto">
+      <div id="html5qr-code-full-region" className="bg-slate-900 rounded-lg overflow-hidden min-h-[300px]" />
+      {scanError && <p className="text-red-500 text-sm mt-2">{scanError}</p>}
+      {!Html5QrcodeScannerClass && !scanError && <p className="text-gray-400 text-sm mt-2">Loading scanner...</p>}
+    </div>
+  );
 }
