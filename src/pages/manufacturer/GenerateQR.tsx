@@ -131,15 +131,10 @@ export default function GenerateQR() {
     setIsDownloading(true);
     
     try {
-      // Dynamically import libraries to avoid bundling issues
+      // Dynamically import JSZip
       const JSZipModule = await import("jszip");
-      // Handle different export types (CommonJS vs ESM)
       const JSZip = JSZipModule.default || JSZipModule;
       
-      const FileSaverModule = await import("file-saver");
-      const saveAs = FileSaverModule.saveAs || FileSaverModule.default;
-
-      // @ts-ignore
       const zip = new JSZip();
       const folder = zip.folder("qr-codes");
       
@@ -151,10 +146,13 @@ export default function GenerateQR() {
       for (const unit of medicineUnits) {
         const canvas = document.getElementById(`qr-canvas-${unit.tokenId}`) as HTMLCanvasElement;
         if (canvas) {
-          const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve));
-          if (blob) {
-            folder.file(`${unit.tokenId}.png`, blob);
+          try {
+            const dataUrl = canvas.toDataURL("image/png");
+            const base64Data = dataUrl.split(',')[1];
+            folder.file(`${unit.tokenId}.png`, base64Data, { base64: true });
             count++;
+          } catch (e) {
+            console.warn("Canvas export failed for unit:", unit.tokenId);
           }
         }
       }
@@ -169,25 +167,27 @@ export default function GenerateQR() {
       const content = await zip.generateAsync({ type: "blob" });
       const fileName = `batch-${selectedMedicineId}-qrs.zip`;
       
-      if (saveAs) {
-        saveAs(content, fileName);
-      } else {
-        // Fallback download method
-        const url = URL.createObjectURL(content);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }
+      // Direct download using anchor tag
+      const url = window.URL.createObjectURL(content);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      link.style.display = "none";
+      document.body.appendChild(link);
       
-      toast.success("QR Codes downloaded successfully", {
+      link.click();
+      
+      // Cleanup after a short delay
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+      
+      toast.success("Download started", {
         description: `${count} QR codes zipped.`
       });
     } catch (error) {
-      console.error(error);
+      console.error("Download error:", error);
       toast.error("Failed to download QR codes");
     } finally {
       setIsDownloading(false);
@@ -249,6 +249,7 @@ export default function GenerateQR() {
                       Found {medicineUnits.length} units
                     </div>
                     <Button 
+                      type="button"
                       onClick={downloadBatchQRs} 
                       disabled={isDownloading || medicineUnits.length === 0}
                       className="bg-cyan-500 hover:bg-cyan-600 text-white"
