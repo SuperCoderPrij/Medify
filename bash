@@ -1,1 +1,1 @@
-pnpm add -D @types/qrcode.react && pnpm add html5-qrcode
+pnpm add jszip file-saver @types/file-saver @types/jszip

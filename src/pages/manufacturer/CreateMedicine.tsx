@@ -48,12 +48,21 @@ export default function CreateMedicine() {
 
     setIsSubmitting(true);
     const formData = new FormData(e.currentTarget);
+    const quantity = Number(formData.get("quantity"));
+
+    if (quantity > 100) {
+        toast.error("Quantity Limit Exceeded", {
+            description: "For this demo, please limit batch size to 100 units."
+        });
+        setIsSubmitting(false);
+        return;
+    }
 
     try {
       // Simulate blockchain interaction
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      const tokenId = `NFT-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+      const batchId = `BATCH-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
       const transactionHash = `0x${Math.random().toString(16).substr(2, 40)}`;
       const contractAddress = "0x71C95911E9a5D330f4D621842EC243EE134329A2"; // Mock contract address
       
@@ -65,19 +74,19 @@ export default function CreateMedicine() {
         manufacturingDate: formData.get("manufacturingDate") as string,
         expiryDate: formData.get("expiryDate") as string,
         mrp: Number(formData.get("mrp")),
-        quantity: Number(formData.get("quantity")),
-        tokenId: tokenId,
+        quantity: quantity,
+        tokenId: batchId,
         transactionHash: transactionHash,
         contractAddress: contractAddress,
         qrCodeData: JSON.stringify({
-          id: tokenId,
+          id: batchId,
           batch: formData.get("batchNumber"),
           name: formData.get("medicineName")
         }),
       });
 
-      toast.success("Medicine Minted Successfully", {
-        description: `Token ID: ${tokenId} has been created on Polygon Amoy using wallet ${account.slice(0, 6)}...`
+      toast.success("Medicine Batch Minted Successfully", {
+        description: `${quantity} NFTs created on Polygon Amoy. Batch ID: ${batchId}`
       });
       navigate("/manufacturer/medicines");
     } catch (error) {
@@ -203,15 +212,18 @@ export default function CreateMedicine() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="quantity" className="text-gray-300">Quantity</Label>
+                  <Label htmlFor="quantity" className="text-gray-300">Quantity (Units)</Label>
                   <Input
                     id="quantity"
                     name="quantity"
                     type="number"
-                    placeholder="e.g. 10000"
+                    min="1"
+                    max="100"
+                    placeholder="e.g. 50"
                     className="bg-slate-950/50 border-slate-800 text-white"
                     required
                   />
+                  <p className="text-xs text-gray-500">Max 100 units for this demo</p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="manufacturingDate" className="text-gray-300">Manufacturing Date</Label>
@@ -256,12 +268,12 @@ export default function CreateMedicine() {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Minting NFT...
+                      Minting Batch NFTs...
                     </>
                   ) : (
                     <>
                       <Sparkles className="mr-2 h-5 w-5" />
-                      Mint Medicine NFT
+                      Mint Medicine Batch
                     </>
                   )}
                 </Button>

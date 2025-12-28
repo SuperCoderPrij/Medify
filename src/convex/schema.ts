@@ -41,7 +41,7 @@ const schema = defineSchema(
 
     // Medicines table - stores NFT medicine data
     medicines: defineTable({
-      tokenId: v.string(), // NFT token ID from blockchain
+      tokenId: v.string(), // NFT token ID from blockchain (Batch ID)
       medicineName: v.string(),
       manufacturerName: v.string(),
       manufacturerId: v.id("users"),
@@ -51,7 +51,7 @@ const schema = defineSchema(
       expiryDate: v.string(),
       mrp: v.number(),
       quantity: v.number(),
-      qrCodeData: v.string(), // QR code content
+      qrCodeData: v.string(), // QR code content for the batch
       transactionHash: v.string(), // Blockchain transaction hash
       contractAddress: v.string(), // Smart contract address
       isActive: v.boolean(),
@@ -60,9 +60,22 @@ const schema = defineSchema(
       .index("by_batch", ["batchNumber"])
       .index("by_token_id", ["tokenId"]),
 
+    // Individual Medicine Units
+    medicine_units: defineTable({
+      medicineId: v.id("medicines"),
+      tokenId: v.string(), // Unique Token ID for this unit
+      serialNumber: v.number(), // 1 to N
+      qrCodeData: v.string(), // Unique QR code content
+      isVerified: v.boolean(),
+      status: v.optional(v.string()), // "minted", "sold", "consumed"
+    })
+      .index("by_medicine", ["medicineId"])
+      .index("by_token_id", ["tokenId"]),
+
     // Scan history - tracks all QR code scans
     scanHistory: defineTable({
       medicineId: v.id("medicines"),
+      unitId: v.optional(v.id("medicine_units")), // Link to specific unit
       userId: v.optional(v.id("users")),
       scanResult: v.string(), // "genuine" or "counterfeit"
       location: v.optional(v.string()),

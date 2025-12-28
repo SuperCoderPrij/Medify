@@ -24,13 +24,48 @@ export const createMedicine = mutation({
       throw new Error("Not authenticated");
     }
 
+    // 1. Create the Batch Record
     const medicineId = await ctx.db.insert("medicines", {
       ...args,
       manufacturerId: userId,
       isActive: true,
     });
 
+    // 2. Create Individual Units
+    // Limit quantity to prevent timeout/abuse for this demo
+    const quantity = Math.min(args.quantity, 100); 
+
+    for (let i = 1; i <= quantity; i++) {
+      const unitTokenId = `${args.tokenId}-${i}`;
+      const unitQrData = JSON.stringify({
+        id: unitTokenId,
+        batch: args.batchNumber,
+        contract: args.contractAddress,
+        unit: i
+      });
+
+      await ctx.db.insert("medicine_units", {
+        medicineId,
+        tokenId: unitTokenId,
+        serialNumber: i,
+        qrCodeData: unitQrData,
+        isVerified: true,
+        status: "minted"
+      });
+    }
+
     return medicineId;
+  },
+});
+
+// Get medicine units for a medicine
+export const getMedicineUnits = query({
+  args: { medicineId: v.id("medicines") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("medicine_units")
+      .withIndex("by_medicine", (q) => q.eq("medicineId", args.medicineId))
+      .collect();
   },
 });
 
