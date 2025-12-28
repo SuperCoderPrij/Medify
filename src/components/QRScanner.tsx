@@ -12,7 +12,9 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
 
   useEffect(() => {
     // Dynamic import to avoid module loading issues during initial bundle load
-    import("html5-qrcode").then(() => {
+    // We check if the module is available
+    import("html5-qrcode").then((mod) => {
+        console.log("html5-qrcode loaded", mod);
         setLibLoaded(true);
     }).catch(err => {
         console.error("Failed to load html5-qrcode library", err);
