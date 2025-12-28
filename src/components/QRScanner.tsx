@@ -83,15 +83,31 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
       // Defensive cleanup
       if (scannerRef.current) {
         const scanner = scannerRef.current;
+        scannerRef.current = null; // Prevent double cleanup
+
         // Use Promise.resolve to handle cases where stop() returns undefined or a promise
-        Promise.resolve(scanner.stop())
-            .catch(() => {
-                // Ignore stop errors (e.g. if not running)
-            })
-            .finally(() => {
-                // Always try to clear
-                scanner.clear().catch(() => {});
-            });
+        // and wrap in try-catch for synchronous errors
+        try {
+            Promise.resolve(scanner.stop())
+                .catch(() => {
+                    // Ignore stop errors (e.g. if not running)
+                })
+                .finally(() => {
+                    // Always try to clear, wrap in Promise.resolve just in case clear() returns undefined
+                    try {
+                        Promise.resolve(scanner.clear()).catch(() => {});
+                    } catch (e) {
+                        // Ignore clear errors
+                    }
+                });
+        } catch (err) {
+            // If stop throws synchronously, still try to clear
+            try {
+                Promise.resolve(scanner.clear()).catch(() => {});
+            } catch (e) {
+                // Ignore
+            }
+        }
       }
     };
   }, [onScanSuccess, onScanFailure, elementId]);
@@ -123,7 +139,7 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
             const result = await fileScanner.scanFile(file, true);
             onScanSuccess(result, null);
             // Cleanup file scanner
-            fileScanner.clear().catch(() => {});
+            Promise.resolve(fileScanner.clear()).catch(() => {});
         } catch (err) {
              console.error("Error scanning file:", err);
              setScanError("Could not read QR code from image. Please try a clearer image.");
