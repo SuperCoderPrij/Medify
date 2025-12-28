@@ -108,11 +108,11 @@ export default function Landing() {
                     Scan Medicine Now
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-slate-900 border-slate-800 text-white sm:max-w-lg max-h-[85vh] overflow-y-auto">
+                <DialogContent className="bg-slate-900 border-slate-800 text-white sm:max-w-xl max-h-[90vh] overflow-y-auto p-6">
                   <DialogHeader>
-                    <DialogTitle>Scan Medicine QR</DialogTitle>
+                    <DialogTitle className="text-xl font-bold text-center mb-2">Scan Medicine QR</DialogTitle>
                   </DialogHeader>
-                  <div className="w-full pb-2">
+                  <div className="w-full">
                     <QRScanner onScanSuccess={handleScanSuccess} />
                   </div>
                 </DialogContent>

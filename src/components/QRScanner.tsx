@@ -196,8 +196,8 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
 
   return (
     <div className="w-full flex flex-col gap-4">
-      <div className="relative bg-slate-900 rounded-lg overflow-hidden min-h-[250px] w-full border-2 border-cyan-500/30 shadow-inner">
-        <div id={elementId} className="w-full h-full min-h-[250px]" />
+      <div className="relative bg-slate-900 rounded-lg overflow-hidden h-[400px] w-full border-2 border-cyan-500/30 shadow-inner group">
+        <div id={elementId} className="w-full h-full" />
         
         {isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-white z-10">
@@ -225,7 +225,7 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
         
         {/* Overlay for scanning guide */}
         {!isLoading && !scanError && (
-            <div className="absolute inset-0 pointer-events-none border-[30px] border-black/30">
+            <div className="absolute inset-0 pointer-events-none border-[30px] border-black/30 z-0">
                 <div className="w-full h-full border-2 border-cyan-500/50 relative">
                     <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-400"></div>
                     <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-cyan-400"></div>
@@ -234,24 +234,25 @@ export default function QRScanner({ onScanSuccess, onScanFailure }: QRScannerPro
                 </div>
             </div>
         )}
-      </div>
 
-      <div className="flex justify-center">
-        <input 
-            type="file" 
-            ref={fileInputRef} 
-            className="hidden" 
-            accept="image/*" 
-            onChange={handleFileUpload}
-        />
-        <Button 
-            variant="secondary" 
-            className="w-full bg-slate-800 text-white hover:bg-slate-700 border border-slate-700"
-            onClick={() => fileInputRef.current?.click()}
-        >
-            <Image className="mr-2 h-4 w-4" />
-            Upload Image to Scan
-        </Button>
+        {/* Floating Upload Button */}
+        <div className="absolute bottom-6 left-0 right-0 flex justify-center z-20 px-4">
+            <input 
+                type="file" 
+                ref={fileInputRef} 
+                className="hidden" 
+                accept="image/*" 
+                onChange={handleFileUpload}
+            />
+            <Button 
+                variant="secondary" 
+                className="w-full max-w-xs bg-slate-900/80 backdrop-blur-md text-white hover:bg-slate-800 border border-cyan-500/30 shadow-lg transition-all hover:scale-105"
+                onClick={() => fileInputRef.current?.click()}
+            >
+                <Image className="mr-2 h-4 w-4 text-cyan-400" />
+                Upload Image to Scan
+            </Button>
+        </div>
       </div>
     </div>
   );
