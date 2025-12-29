@@ -1,0 +1,62 @@
+PharmaScan/
+├── public/
+│   ├── logo.png [Image]
+│   ├── logo.svg [Image]
+│   ├── logo_bg.png [Image]
+│   ├── logo_bg.svg [Image]
+│   └── manifest.webmanifest [JSON]
+├── src/
+│   ├── components/
+│   │   ├── ui/
+│   │   │   ├── accordion.tsx [TypeScript]
+│   │   │   ├── alert-dialog.tsx [TypeScript]
+│   │   │   ├── button.tsx [TypeScript]
+│   │   │   ├── card.tsx [TypeScript]
+│   │   │   ├── dialog.tsx [TypeScript]
+│   │   │   ├── input.tsx [TypeScript]
+│   │   │   ├── sonner.tsx [TypeScript]
+│   │   │   └── ... (other UI components) [TypeScript]
+│   │   ├── LogoDropdown.tsx [TypeScript]
+│   │   └── QRScanner.tsx [TypeScript]
+│   ├── convex/
+│   │   ├── auth/
+│   │   │   └── emailOtp.ts [TypeScript]
+│   │   ├── auth.config.ts [TypeScript]
+│   │   ├── auth.ts [TypeScript]
+│   │   ├── http.ts [TypeScript]
+│   │   ├── medicines.ts [TypeScript]
+│   │   ├── reports.ts [TypeScript]
+│   │   ├── scans.ts [TypeScript]
+│   │   ├── schema.ts [TypeScript]
+│   │   └── users.ts [TypeScript]
+│   ├── hooks/
+│   │   ├── use-auth.ts [TypeScript]
+│   │   ├── use-mobile.ts [TypeScript]
+│   │   └── use-web3.tsx [TypeScript]
+│   ├── lib/
+│   │   └── utils.ts [TypeScript]
+│   ├── pages/
+│   │   ├── consumer/
+│   │   │   └── Dashboard.tsx [TypeScript]
+│   │   ├── manufacturer/
+│   │   │   ├── CreateMedicine.tsx [TypeScript]
+│   │   │   ├── Dashboard.tsx [TypeScript]
+│   │   │   ├── GenerateQR.tsx [TypeScript]
+│   │   │   ├── ManufacturerLayout.tsx [TypeScript]
+│   │   │   ├── Medicines.tsx [TypeScript]
+│   │   │   └── Reports.tsx [TypeScript]
+│   │   ├── Auth.tsx [TypeScript]
+│   │   ├── Landing.tsx [TypeScript]
+│   │   ├── NotFound.tsx [TypeScript]
+│   │   └── Verify.tsx [TypeScript]
+│   ├── types/
+│   │   ├── global.d.ts [TypeScript]
+│   │   └── modules.d.ts [TypeScript]
+│   ├── index.css [CSS]
+│   ├── instrumentation.tsx [TypeScript]
+│   ├── main.tsx [TypeScript]
+│   └── vite-env.d.ts [TypeScript]
+├── components.json [JSON]
+├── index.html [HTML]
+├── package.json [JSON]
+└── README.md [Markdown]
