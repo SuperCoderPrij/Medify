@@ -48,13 +48,6 @@ export default function CreateMedicine() {
       return;
     }
 
-    if (PHARMA_NFT_ADDRESS === "YOUR_DEPLOYED_CONTRACT_ADDRESS") {
-        toast.error("Contract Not Configured", {
-            description: "Please deploy the smart contract and update src/lib/blockchain.ts with the address."
-        });
-        return;
-    }
-
     setIsSubmitting(true);
     const formData = new FormData(e.currentTarget);
     const quantity = Number(formData.get("quantity"));
