@@ -1,7 +1,6 @@
 {
   "name": "pharmascan-blockchain",
   "version": "1.0.0",
-  "description": "Smart contracts for PharmaScan",
   "scripts": {
     "test": "hardhat test",
     "compile": "hardhat compile",
@@ -9,11 +8,10 @@
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "hardhat": "^2.22.0",
     "dotenv": "^16.4.5",
-    "typescript": "^5.4.0",
-    "ts-node": "^10.9.2",
-    "@types/node": "^20.11.0"
+    "hardhat": "^2.22.2",
+    "typescript": "^5.4.3",
+    "ts-node": "^10.9.2"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.0.2"

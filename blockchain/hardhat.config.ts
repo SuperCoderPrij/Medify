@@ -4,15 +4,12 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-// Ensure private key is available
-const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
-
 const config: HardhatUserConfig = {
-  solidity: "0.8.20",
+  solidity: "0.8.24",
   networks: {
     amoy: {
       url: "https://rpc-amoy.polygon.technology/",
-      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
     },
   },
 };

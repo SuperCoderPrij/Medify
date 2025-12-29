@@ -2,10 +2,14 @@
 
 This folder contains the smart contracts and deployment scripts for the PharmaScan project.
 
-## ⚠️ Manual Steps Required
+## Prerequisites
 
-You must perform these steps manually to deploy the contract to the blockchain.
+- Node.js installed
+- MetaMask wallet with Polygon Amoy Testnet configured
+- Testnet MATIC (from faucet)
 
-### 1. Setup Blockchain Environment
+## 1. Install Blockchain Dependencies
 
-Open your terminal and navigate to the `blockchain` folder:
+I have already created the `package.json` for you. You just need to install the dependencies.
+
+Run this command in your terminal (from the `blockchain` folder):
