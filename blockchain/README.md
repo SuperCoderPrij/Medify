@@ -2,11 +2,10 @@
 
 This folder contains the smart contracts and deployment scripts for the PharmaScan project.
 
-## Prerequisites
+## ⚠️ Manual Steps Required
 
-You need to have Node.js installed.
+You must perform these steps manually to deploy the contract to the blockchain.
 
-## Setup
+### 1. Setup Blockchain Environment
 
-1.  Navigate to the `blockchain` folder:
-    
+Open your terminal and navigate to the `blockchain` folder:
