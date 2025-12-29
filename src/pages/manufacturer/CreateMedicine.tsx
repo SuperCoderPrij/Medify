@@ -18,12 +18,14 @@ import { Link, useNavigate } from "react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useWeb3, POLYGON_AMOY_CHAIN_ID } from "@/hooks/use-web3";
+import { ethers } from "ethers";
+import { PHARMA_NFT_ABI, PHARMA_NFT_ADDRESS } from "@/lib/blockchain";
 
 export default function CreateMedicine() {
   const navigate = useNavigate();
   const createMedicine = useMutation(api.medicines.createMedicine);
   const user = useQuery(api.users.currentUser);
-  const { account, connectWallet, chainId, switchToAmoy } = useWeb3();
+  const { account, connectWallet, chainId, switchToAmoy, provider } = useWeb3();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -46,52 +48,120 @@ export default function CreateMedicine() {
       return;
     }
 
+    if (PHARMA_NFT_ADDRESS === "YOUR_DEPLOYED_CONTRACT_ADDRESS") {
+        toast.error("Contract Not Configured", {
+            description: "Please deploy the smart contract and update src/lib/blockchain.ts with the address."
+        });
+        return;
+    }
+
     setIsSubmitting(true);
     const formData = new FormData(e.currentTarget);
     const quantity = Number(formData.get("quantity"));
 
-    if (quantity > 100) {
-        toast.error("Quantity Limit Exceeded", {
-            description: "For this demo, please limit batch size to 100 units."
-        });
-        setIsSubmitting(false);
-        return;
-    }
-
+    // For real blockchain transactions, we might want to limit batch size or handle it differently
+    // Since we are minting 1 NFT per batch in this simplified logic (or loop for units?)
+    // The prompt says "Manufacturer mints NFT". Usually 1 NFT = 1 Batch or 1 Unit.
+    // The contract supports minting individual items. 
+    // For this demo, let's assume we mint ONE NFT representing the BATCH for simplicity and gas costs,
+    // OR we loop. The prompt says "NFT generation MUST be implemented".
+    // Let's mint ONE NFT for the Batch to keep it usable on testnet without waiting for 100 txs.
+    
     try {
-      // Simulate blockchain interaction
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const signer = await provider?.getSigner();
+      if (!signer) throw new Error("No signer available");
 
-      const batchId = `BATCH-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-      const transactionHash = `0x${Math.random().toString(16).substr(2, 40)}`;
-      const contractAddress = "0x71C95911E9a5D330f4D621842EC243EE134329A2"; // Mock contract address
+      const contract = new ethers.Contract(PHARMA_NFT_ADDRESS, PHARMA_NFT_ABI, signer);
+
+      const medicineName = formData.get("medicineName") as string;
+      const batchNumber = formData.get("batchNumber") as string;
+      const manufacturerName = user.name || "Unknown Manufacturer";
+      const expiryDate = formData.get("expiryDate") as string;
+      const manufacturingDate = formData.get("manufacturingDate") as string;
+      const medicineType = formData.get("medicineType") as string;
+      const mrp = Number(formData.get("mrp"));
+
+      // Create Metadata (On-chain via Data URI for simplicity, or IPFS)
+      const metadata = {
+        name: `${medicineName} - Batch ${batchNumber}`,
+        description: `Authentic ${medicineName} manufactured by ${manufacturerName}`,
+        image: "https://vly.ai/logo.png", // Placeholder image
+        attributes: [
+            { trait_type: "Batch", value: batchNumber },
+            { trait_type: "Manufacturer", value: manufacturerName },
+            { trait_type: "Expiry", value: expiryDate },
+            { trait_type: "Type", value: medicineType }
+        ]
+      };
+
+      const tokenURI = `data:application/json;base64,${btoa(JSON.stringify(metadata))}`;
+      const medicineIdUUID = crypto.randomUUID(); // Internal ID reference
+
+      toast.info("Confirm Transaction", {
+        description: "Please confirm the minting transaction in MetaMask..."
+      });
+
+      // Call Smart Contract
+      const tx = await contract.mintMedicine(
+        account,
+        tokenURI,
+        medicineIdUUID,
+        batchNumber,
+        manufacturerName,
+        expiryDate,
+        manufacturingDate
+      );
+
+      toast.loading("Minting in progress...", {
+        description: "Waiting for blockchain confirmation..."
+      });
+
+      const receipt = await tx.wait();
       
+      // Get Token ID from events
+      // Event: MedicineMinted(uint256 indexed tokenId, string batchNumber, address manufacturer)
+      let tokenId = "";
+      for (const log of receipt.logs) {
+        try {
+            const parsed = contract.interface.parseLog(log);
+            if (parsed && parsed.name === "MedicineMinted") {
+                tokenId = parsed.args[0].toString();
+                break;
+            }
+        } catch (e) { continue; }
+      }
+
+      if (!tokenId) throw new Error("Failed to retrieve Token ID from transaction logs");
+
+      // Save to Convex (Digital Twin)
       await createMedicine({
-        medicineName: formData.get("medicineName") as string,
-        manufacturerName: user.name || "Unknown Manufacturer",
-        batchNumber: formData.get("batchNumber") as string,
-        medicineType: formData.get("medicineType") as string,
-        manufacturingDate: formData.get("manufacturingDate") as string,
-        expiryDate: formData.get("expiryDate") as string,
-        mrp: Number(formData.get("mrp")),
-        quantity: quantity,
-        tokenId: batchId,
-        transactionHash: transactionHash,
-        contractAddress: contractAddress,
+        medicineName,
+        manufacturerName,
+        batchNumber,
+        medicineType,
+        manufacturingDate,
+        expiryDate,
+        mrp,
+        quantity: quantity, // We still track quantity in DB, even if we minted 1 Batch NFT
+        tokenId: tokenId,
+        transactionHash: receipt.hash,
+        contractAddress: PHARMA_NFT_ADDRESS,
         qrCodeData: JSON.stringify({
-          id: batchId,
-          batch: formData.get("batchNumber"),
-          name: formData.get("medicineName")
+          contract: PHARMA_NFT_ADDRESS,
+          tokenId: tokenId,
+          batch: batchNumber
         }),
       });
 
-      toast.success("Medicine Batch Minted Successfully", {
-        description: `${quantity} NFTs created on Polygon Amoy. Batch ID: ${batchId}`
+      toast.success("Medicine Minted Successfully", {
+        description: `Token ID: ${tokenId} minted on Polygon Amoy.`
       });
       navigate("/manufacturer/medicines");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Failed to mint medicine");
+      toast.error("Failed to mint medicine", {
+        description: error.reason || error.message || "Transaction failed"
+      });
     } finally {
       setIsSubmitting(false);
     }
