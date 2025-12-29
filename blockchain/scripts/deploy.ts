@@ -1,20 +1,21 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  console.log("Deploying PharmaNFT contract...");
+  const [deployer] = await ethers.getSigners();
 
-  // The address provided by the user to be the initial owner
-  const initialOwner = "0x1FdD7aa04Aa2FC749b5f05f543aFd18CD782FaCe";
+  console.log("Deploying contracts with the account:", deployer.address);
 
   const PharmaNFT = await ethers.getContractFactory("PharmaNFT");
-  const pharmaNFT = await PharmaNFT.deploy(initialOwner);
+  const pharmaNFT = await PharmaNFT.deploy();
 
   await pharmaNFT.waitForDeployment();
 
   const address = await pharmaNFT.getAddress();
 
-  console.log(`PharmaNFT deployed to: ${address}`);
-  console.log("IMPORTANT: Copy this address and update src/lib/blockchain.ts");
+  console.log("PharmaNFT deployed to:", address);
+  
+  console.log("\nIMPORTANT: Update src/lib/blockchain.ts with this address:");
+  console.log(`export const PHARMA_NFT_ADDRESS = "${address}";`);
 }
 
 main().catch((error) => {

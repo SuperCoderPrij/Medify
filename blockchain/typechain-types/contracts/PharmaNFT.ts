@@ -23,39 +23,13 @@ import type {
   TypedContractMethod,
 } from "../common";
 
-export declare namespace PharmaNFT {
-  export type MedicineDataStruct = {
-    medicineId: string;
-    batchNumber: string;
-    manufacturer: string;
-    expiryDate: string;
-    manufacturingDate: string;
-  };
-
-  export type MedicineDataStructOutput = [
-    medicineId: string,
-    batchNumber: string,
-    manufacturer: string,
-    expiryDate: string,
-    manufacturingDate: string
-  ] & {
-    medicineId: string;
-    batchNumber: string;
-    manufacturer: string;
-    expiryDate: string;
-    manufacturingDate: string;
-  };
-}
-
 export interface PharmaNFTInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "approve"
       | "balanceOf"
       | "getApproved"
-      | "getMedicineDetails"
       | "isApprovedForAll"
-      | "medicineDetails"
       | "mintMedicine"
       | "name"
       | "owner"
@@ -95,16 +69,8 @@ export interface PharmaNFTInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getMedicineDetails",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [AddressLike, AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "medicineDetails",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "mintMedicine",
@@ -157,15 +123,7 @@ export interface PharmaNFTInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getMedicineDetails",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "isApprovedForAll",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "medicineDetails",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -381,29 +339,9 @@ export interface PharmaNFT extends BaseContract {
 
   getApproved: TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
 
-  getMedicineDetails: TypedContractMethod<
-    [tokenId: BigNumberish],
-    [PharmaNFT.MedicineDataStructOutput],
-    "view"
-  >;
-
   isApprovedForAll: TypedContractMethod<
     [owner: AddressLike, operator: AddressLike],
     [boolean],
-    "view"
-  >;
-
-  medicineDetails: TypedContractMethod<
-    [arg0: BigNumberish],
-    [
-      [string, string, string, string, string] & {
-        medicineId: string;
-        batchNumber: string;
-        manufacturer: string;
-        expiryDate: string;
-        manufacturingDate: string;
-      }
-    ],
     "view"
   >;
 
@@ -492,32 +430,10 @@ export interface PharmaNFT extends BaseContract {
     nameOrSignature: "getApproved"
   ): TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
   getFunction(
-    nameOrSignature: "getMedicineDetails"
-  ): TypedContractMethod<
-    [tokenId: BigNumberish],
-    [PharmaNFT.MedicineDataStructOutput],
-    "view"
-  >;
-  getFunction(
     nameOrSignature: "isApprovedForAll"
   ): TypedContractMethod<
     [owner: AddressLike, operator: AddressLike],
     [boolean],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "medicineDetails"
-  ): TypedContractMethod<
-    [arg0: BigNumberish],
-    [
-      [string, string, string, string, string] & {
-        medicineId: string;
-        batchNumber: string;
-        manufacturer: string;
-        expiryDate: string;
-        manufacturingDate: string;
-      }
-    ],
     "view"
   >;
   getFunction(
