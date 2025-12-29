@@ -82,6 +82,27 @@ export const getMedicineByTokenId = query({
   },
 });
 
+// Get medicine details by unit token ID
+export const getMedicineByUnitTokenId = query({
+  args: { tokenId: v.string() },
+  handler: async (ctx, args) => {
+    const unit = await ctx.db
+      .query("medicine_units")
+      .withIndex("by_token_id", (q) => q.eq("tokenId", args.tokenId))
+      .first();
+
+    if (!unit) return null;
+
+    const medicine = await ctx.db.get(unit.medicineId);
+    if (!medicine) return null;
+
+    return {
+      ...medicine,
+      unit,
+    };
+  },
+});
+
 // Get medicine by QR code data
 export const getMedicineByQRCode = query({
   args: { qrCodeData: v.string() },
