@@ -7,6 +7,16 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract PharmaNFT is ERC721URIStorage, Ownable {
     uint256 private _nextTokenId;
 
+    struct MedicineBatch {
+        string medicineId;
+        string batchNumber;
+        string manufacturer;
+        string expiryDate;
+        string manufacturingDate;
+    }
+
+    mapping(uint256 => MedicineBatch) public medicineBatches;
+
     event MedicineMinted(uint256 indexed tokenId, string batchNumber, address manufacturer);
 
     constructor() ERC721("PharmaScan", "PHRM") Ownable(msg.sender) {}
@@ -24,8 +34,19 @@ contract PharmaNFT is ERC721URIStorage, Ownable {
         _mint(recipient, tokenId);
         _setTokenURI(tokenId, tokenURI);
 
-        emit MedicineMinted(tokenId, _batchNumber, msg.sender);
+        medicineBatches[tokenId] = MedicineBatch({
+            medicineId: _medicineId,
+            batchNumber: _batchNumber,
+            manufacturer: _manufacturer,
+            expiryDate: _expiryDate,
+            manufacturingDate: _manufacturingDate
+        });
 
+        emit MedicineMinted(tokenId, _batchNumber, recipient);
         return tokenId;
+    }
+
+    function getMedicineDetails(uint256 tokenId) public view returns (MedicineBatch memory) {
+        return medicineBatches[tokenId];
     }
 }
