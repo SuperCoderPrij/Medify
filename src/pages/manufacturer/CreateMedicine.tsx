@@ -112,6 +112,7 @@ export default function CreateMedicine() {
       });
 
       const receipt = await tx.wait();
+      console.log("Transaction Receipt:", receipt);
       
       // Get Token ID from events
       // Event: MedicineMinted(uint256 indexed tokenId, string batchNumber, address manufacturer)
@@ -119,24 +120,34 @@ export default function CreateMedicine() {
       let tokenId = "";
       
       if (receipt && receipt.logs) {
+        console.log("Receipt Logs:", receipt.logs);
         for (const log of receipt.logs) {
           try {
               const parsed = contract.interface.parseLog(log);
+              console.log("Parsed Log:", parsed);
               if (parsed) {
                 if (parsed.name === "MedicineMinted") {
                     tokenId = parsed.args[0].toString();
+                    console.log("Found TokenID from MedicineMinted:", tokenId);
                     break;
                 }
                 if (parsed.name === "Transfer") {
                     // Transfer(from, to, tokenId) - args[2] is tokenId
                     tokenId = parsed.args[2].toString();
+                    console.log("Found TokenID from Transfer:", tokenId);
                 }
               }
-          } catch (e) { continue; }
+          } catch (e) { 
+            console.log("Failed to parse log:", e);
+            continue; 
+          }
         }
       }
 
-      if (!tokenId) throw new Error("Failed to retrieve Token ID from transaction logs. The transaction may have succeeded but the event was not found.");
+      if (!tokenId) {
+        console.error("Token ID not found in logs. Logs available:", receipt?.logs);
+        throw new Error("Failed to retrieve Token ID from transaction logs. The transaction may have succeeded but the event was not found.");
+      }
 
       // Save to Convex (Digital Twin)
       await createMedicine({
