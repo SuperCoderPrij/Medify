@@ -58,7 +58,8 @@ const schema = defineSchema(
     })
       .index("by_manufacturer", ["manufacturerId"])
       .index("by_batch", ["batchNumber"])
-      .index("by_token_id", ["tokenId"]),
+      .index("by_token_id", ["tokenId"])
+      .index("by_qr_code", ["qrCodeData"]),
 
     // Individual Medicine Units
     medicine_units: defineTable({
@@ -70,7 +71,8 @@ const schema = defineSchema(
       status: v.optional(v.string()), // "minted", "sold", "consumed"
     })
       .index("by_medicine", ["medicineId"])
-      .index("by_token_id", ["tokenId"]),
+      .index("by_token_id", ["tokenId"])
+      .index("by_qr_code", ["qrCodeData"]),
 
     // Scan history - tracks all QR code scans
     scanHistory: defineTable({

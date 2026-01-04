@@ -107,9 +107,31 @@ export const getMedicineByUnitTokenId = query({
 export const getMedicineByQRCode = query({
   args: { qrCodeData: v.string() },
   handler: async (ctx, args) => {
-    const medicines = await ctx.db.query("medicines").collect();
-    const medicine = medicines.find((m) => m.qrCodeData === args.qrCodeData);
-    return medicine || null;
+    // Try to find in medicines (batch QR)
+    const medicine = await ctx.db
+      .query("medicines")
+      .withIndex("by_qr_code", (q) => q.eq("qrCodeData", args.qrCodeData))
+      .first();
+    
+    if (medicine) return medicine;
+
+    // Try to find in medicine_units (unit QR)
+    const unit = await ctx.db
+      .query("medicine_units")
+      .withIndex("by_qr_code", (q) => q.eq("qrCodeData", args.qrCodeData))
+      .first();
+
+    if (unit) {
+      const parentMedicine = await ctx.db.get(unit.medicineId);
+      if (parentMedicine) {
+        return {
+          ...parentMedicine,
+          unit
+        };
+      }
+    }
+
+    return null;
   },
 });
 

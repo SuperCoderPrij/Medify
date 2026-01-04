@@ -32,12 +32,8 @@ export default function Verify() {
   const [nftData, setNftData] = useState<any>(null);
 
   useEffect(() => {
+    // Redirect if error exists, loading is done, and no medicine data found
     if (error && !loading && !medicineData) {
-        // If we have an error, aren't loading, and found no data in Convex, redirect
-        // We wait a brief moment so the user sees the error state or we can just redirect immediately
-        // Let's redirect immediately or after a short delay? 
-        // The prompt says "redirect ... when ... cannot be verified".
-        // Let's do it when we are sure.
         const timer = setTimeout(() => {
              navigate("/not-verified");
         }, 100);
@@ -131,6 +127,9 @@ export default function Verify() {
   // Combine loading state
   const isPageLoading = loading && !medicineData;
 
+  // Check if medicine is active (if data exists)
+  const isDeactivated = medicineData && medicineData.isActive === false;
+
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4 py-12">
       <div className="fixed inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] pointer-events-none z-0" />
@@ -156,6 +155,11 @@ export default function Verify() {
                 "Verifying Authenticity..."
               ) : error && !medicineData ? (
                 "Verification Failed"
+              ) : isDeactivated ? (
+                <div className="flex items-center gap-2 text-red-400">
+                    <AlertTriangle className="h-6 w-6" />
+                    <span>Batch Deactivated</span>
+                </div>
               ) : (
                 <>
                   <div className="flex items-center gap-2 text-green-400">
@@ -193,6 +197,11 @@ export default function Verify() {
                   <p className="text-cyan-400 font-mono text-sm">
                     {medicineData?.unit?.tokenId || nftData?.tokenId || tokenId}
                   </p>
+                  {isDeactivated && (
+                      <div className="mt-2 px-3 py-1 rounded-full bg-red-500/10 text-red-400 text-xs border border-red-500/20">
+                          This batch has been marked as inactive/recalled by the manufacturer.
+                      </div>
+                  )}
                   {medicineData && (
                     <div className="mt-4 flex gap-2">
                         <span className="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-xs border border-cyan-500/20">
