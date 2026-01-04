@@ -91,7 +91,8 @@ export default function CreateMedicine() {
       const medicineIdUUID = crypto.randomUUID(); // Internal ID reference
 
       toast.info("Confirm Transaction", {
-        description: "Please confirm the minting transaction in MetaMask..."
+        description: "Please confirm the minting transaction in MetaMask...",
+        style: { color: "black", backgroundColor: "white" }
       });
 
       // Call Smart Contract
@@ -105,8 +106,9 @@ export default function CreateMedicine() {
         manufacturingDate
       );
 
-      toast.loading("Minting in progress...", {
-        description: "Waiting for blockchain confirmation..."
+      const loadingToastId = toast.loading("Minting in progress...", {
+        description: "Waiting for blockchain confirmation...",
+        style: { color: "black", backgroundColor: "white" }
       });
 
       const receipt = await tx.wait();
@@ -156,14 +158,18 @@ export default function CreateMedicine() {
         }),
       });
 
+      toast.dismiss(loadingToastId);
       toast.success("Medicine Minted Successfully", {
-        description: `Token ID: ${tokenId} minted on Polygon Amoy.`
+        description: `Token ID: ${tokenId} minted on Polygon Amoy.`,
+        style: { color: "black", backgroundColor: "white" }
       });
       navigate("/manufacturer/medicines");
     } catch (error: any) {
       console.error(error);
+      toast.dismiss(); // Dismiss all toasts to be safe, or we could track the ID
       toast.error("Failed to mint medicine", {
-        description: error.reason || error.message || "Transaction failed"
+        description: error.reason || error.message || "Transaction failed",
+        style: { color: "black", backgroundColor: "white" }
       });
     } finally {
       setIsSubmitting(false);
