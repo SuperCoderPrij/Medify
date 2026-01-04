@@ -7,5 +7,6 @@ export const PHARMA_NFT_ABI = [
   "function tokenURI(uint256 tokenId) view returns (string)",
   "function name() view returns (string)",
   "function symbol() view returns (string)",
-  "event MedicineMinted(uint256 indexed tokenId, string batchNumber, address manufacturer)"
+  "event MedicineMinted(uint256 indexed tokenId, string batchNumber, address manufacturer)",
+  "event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)"
 ];

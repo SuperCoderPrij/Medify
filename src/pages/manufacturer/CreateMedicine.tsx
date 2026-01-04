@@ -113,18 +113,28 @@ export default function CreateMedicine() {
       
       // Get Token ID from events
       // Event: MedicineMinted(uint256 indexed tokenId, string batchNumber, address manufacturer)
+      // Fallback: Transfer(address indexed from, address indexed to, uint256 indexed tokenId)
       let tokenId = "";
-      for (const log of receipt.logs) {
-        try {
-            const parsed = contract.interface.parseLog(log);
-            if (parsed && parsed.name === "MedicineMinted") {
-                tokenId = parsed.args[0].toString();
-                break;
-            }
-        } catch (e) { continue; }
+      
+      if (receipt && receipt.logs) {
+        for (const log of receipt.logs) {
+          try {
+              const parsed = contract.interface.parseLog(log);
+              if (parsed) {
+                if (parsed.name === "MedicineMinted") {
+                    tokenId = parsed.args[0].toString();
+                    break;
+                }
+                if (parsed.name === "Transfer") {
+                    // Transfer(from, to, tokenId) - args[2] is tokenId
+                    tokenId = parsed.args[2].toString();
+                }
+              }
+          } catch (e) { continue; }
+        }
       }
 
-      if (!tokenId) throw new Error("Failed to retrieve Token ID from transaction logs");
+      if (!tokenId) throw new Error("Failed to retrieve Token ID from transaction logs. The transaction may have succeeded but the event was not found.");
 
       // Save to Convex (Digital Twin)
       await createMedicine({
