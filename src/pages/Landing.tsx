@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import QRScanner from "@/components/QRScanner";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -25,6 +26,21 @@ export default function Landing() {
   };
 
   const handleScanSuccess = (decodedText: string) => {
+    // Validate QR Code
+    const isValidUrl = decodedText.includes("/verify?");
+    let isValidJson = false;
+    try {
+      const parsed = JSON.parse(decodedText);
+      if (parsed.id || parsed.batch || parsed.contract) isValidJson = true;
+    } catch (e) {
+      // Not JSON
+    }
+
+    if (!isValidUrl && !isValidJson) {
+      toast.error("Invalid QR Code. Please scan a valid PharmaAuth medicine QR code.");
+      return;
+    }
+
     setIsScanOpen(false);
     if (decodedText.includes("/verify?")) {
       window.location.href = decodedText;

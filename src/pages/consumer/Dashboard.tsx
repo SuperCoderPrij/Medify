@@ -29,6 +29,21 @@ export default function ConsumerDashboard() {
   const handleScanSuccess = async (decodedText: string) => {
     console.log("Scanned:", decodedText);
     
+    // Validate QR Code
+    const isValidUrl = decodedText.includes("/verify?");
+    let isValidJson = false;
+    try {
+      const parsed = JSON.parse(decodedText);
+      if (parsed.id || parsed.batch || parsed.contract) isValidJson = true;
+    } catch (e) {
+      // Not JSON
+    }
+
+    if (!isValidUrl && !isValidJson) {
+      toast.error("Invalid QR Code. Please scan a valid PharmaAuth medicine QR code.");
+      return;
+    }
+    
     // Check if it's a verification URL
     if (decodedText.includes("/verify?")) {
       window.location.href = decodedText;
