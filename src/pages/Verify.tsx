@@ -39,6 +39,12 @@ export default function Verify() {
         return;
       }
 
+      // Wait for medicineData to load if we have a tokenId that looks like a unit ID (contains hyphen)
+      // This ensures we use the correct Batch Token ID for blockchain verification
+      if (medicineData === undefined && tokenId.includes("-")) {
+        return; // Keep loading
+      }
+
       try {
         // Use a public RPC provider for Amoy if window.ethereum is not available or for read-only
         let provider;
@@ -60,17 +66,27 @@ export default function Verify() {
         } else {
             const contract = new ethers.Contract(contractAddress, ERC721_ABI, provider);
 
+            // Determine the correct Token ID to query on blockchain
+            // If we have medicineData, use the batch tokenId. 
+            // Otherwise, try to use the passed tokenId (fallback)
+            const blockchainTokenId = medicineData?.tokenId || tokenId;
+
+            console.log("Verifying on blockchain with Token ID:", blockchainTokenId);
+
             // Fetch data in parallel
             const [owner, uri, name, symbol] = await Promise.all([
-            contract.ownerOf(tokenId).catch(() => "Unknown"),
-            contract.tokenURI(tokenId).catch(() => "Not available"),
+            contract.ownerOf(blockchainTokenId).catch((err: any) => {
+                console.error("Failed to fetch owner:", err);
+                return "Unknown";
+            }),
+            contract.tokenURI(blockchainTokenId).catch(() => "Not available"),
             contract.name().catch(() => "Unknown Collection"),
             contract.symbol().catch(() => "NFT")
             ]);
 
             setNftData({
             contractAddress,
-            tokenId,
+            tokenId: blockchainTokenId,
             owner,
             uri,
             name,
@@ -254,7 +270,7 @@ export default function Verify() {
                   <Button 
                     variant="secondary" 
                     className="flex-1 bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700" 
-                    onClick={() => window.open(`https://amoy.polygonscan.com/token/${contractAddress}?a=${tokenId}`, '_blank')}
+                    onClick={() => window.open(`https://amoy.polygonscan.com/token/${contractAddress}?a=${nftData?.tokenId || tokenId}`, '_blank')}
                   >
                     View on Explorer <ExternalLink className="ml-2 h-4 w-4" />
                   </Button>

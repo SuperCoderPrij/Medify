@@ -68,7 +68,8 @@ export default function CreateMedicine() {
 
       const medicineName = formData.get("medicineName") as string;
       const batchNumber = formData.get("batchNumber") as string;
-      const manufacturerName = user.name || "Unknown Manufacturer";
+      // Get manufacturer name from form instead of user object directly
+      const manufacturerName = formData.get("manufacturerName") as string || user.name || "Unknown Manufacturer";
       const expiryDate = formData.get("expiryDate") as string;
       const manufacturingDate = formData.get("manufacturingDate") as string;
       const medicineType = formData.get("medicineType") as string;
@@ -164,7 +165,7 @@ export default function CreateMedicine() {
         contractAddress: PHARMA_NFT_ADDRESS,
         qrCodeData: JSON.stringify({
           contract: PHARMA_NFT_ADDRESS,
-          tokenId: tokenId,
+          tokenId: tokenId, // This is the BATCH Token ID
           batch: batchNumber
         }),
       });
@@ -286,6 +287,19 @@ export default function CreateMedicine() {
                     required
                   />
                 </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="manufacturerName" className="text-gray-300">Manufacturer Name</Label>
+                  <Input
+                    id="manufacturerName"
+                    name="manufacturerName"
+                    defaultValue={user?.name || ""}
+                    placeholder="e.g. PharmaCorp Ltd."
+                    className="bg-slate-950/50 border-slate-800 text-white"
+                    required
+                  />
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="medicineType" className="text-gray-300">Type</Label>
                   <Select name="medicineType" required>
