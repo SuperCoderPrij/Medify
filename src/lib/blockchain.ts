@@ -1,4 +1,4 @@
-export const PHARMA_NFT_ADDRESS = "0x1FdD7aa04Aa2FC749b5f05f543aFd18CD782FaCe"; // TODO: Update this after deployment
+export const PHARMA_NFT_ADDRESS = "0x48f273160a259ead63958acf8645b17ccec68e9f"; // TODO: Update this after deployment
 
 export const PHARMA_NFT_ABI = [
   "function mintMedicine(address recipient, string memory tokenURI, string memory _medicineId, string memory _batchNumber, string memory _manufacturer, string memory _expiryDate, string memory _manufacturingDate) public returns (uint256)",
