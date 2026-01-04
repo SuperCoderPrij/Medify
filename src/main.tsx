@@ -24,6 +24,7 @@ const GenerateQR = lazy(() => import("./pages/manufacturer/GenerateQR.tsx"));
 const ManufacturerReports = lazy(() => import("./pages/manufacturer/Reports.tsx"));
 const ConsumerDashboard = lazy(() => import("./pages/consumer/Dashboard.tsx"));
 const Verify = lazy(() => import("./pages/Verify.tsx"));
+const NotVerified = lazy(() => import("./pages/NotVerified.tsx"));
 
 // Simple loading fallback for route transitions
 function RouteLoading() {
@@ -75,6 +76,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="/" element={<Landing />} />
                 <Route path="/auth" element={<AuthPage redirectAfterAuth="/" />} /> {/* TODO: change redirect after auth to correct page */}
                 <Route path="/verify" element={<Verify />} />
+                <Route path="/not-verified" element={<NotVerified />} />
                 
                 {/* Consumer Routes */}
                 <Route path="/app" element={<ConsumerDashboard />} />

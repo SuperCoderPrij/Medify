@@ -32,6 +32,20 @@ export default function Verify() {
   const [nftData, setNftData] = useState<any>(null);
 
   useEffect(() => {
+    if (error && !loading && !medicineData) {
+        // If we have an error, aren't loading, and found no data in Convex, redirect
+        // We wait a brief moment so the user sees the error state or we can just redirect immediately
+        // Let's redirect immediately or after a short delay? 
+        // The prompt says "redirect ... when ... cannot be verified".
+        // Let's do it when we are sure.
+        const timer = setTimeout(() => {
+             navigate("/not-verified");
+        }, 100);
+        return () => clearTimeout(timer);
+    }
+  }, [error, loading, medicineData, navigate]);
+
+  useEffect(() => {
     const verifyNFT = async () => {
       if (!contractAddress || !tokenId) {
         setError("Invalid verification URL. Missing contract address or token ID.");
@@ -63,6 +77,9 @@ export default function Verify() {
         if (!provider) {
              // If no provider works, we'll rely on Convex data if available
              console.warn("No web3 provider available");
+             if (!medicineData) {
+                 setError("No provider and no database record found.");
+             }
         } else {
             const contract = new ethers.Contract(contractAddress, ERC721_ABI, provider);
 
@@ -77,12 +94,16 @@ export default function Verify() {
             const [owner, uri, name, symbol] = await Promise.all([
             contract.ownerOf(blockchainTokenId).catch((err: any) => {
                 console.error("Failed to fetch owner:", err);
-                return "Unknown";
+                return null; // Return null instead of "Unknown" to trigger error check
             }),
             contract.tokenURI(blockchainTokenId).catch(() => "Not available"),
             contract.name().catch(() => "Unknown Collection"),
             contract.symbol().catch(() => "NFT")
             ]);
+
+            if (!owner || owner === "0x0000000000000000000000000000000000000000") {
+                throw new Error("Token does not exist or invalid owner");
+            }
 
             setNftData({
             contractAddress,
