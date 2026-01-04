@@ -78,15 +78,41 @@ export default function Landing() {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-3"
             >
-              <Button
-                onClick={handleGetStarted}
-                disabled={isLoading}
-                className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-300"
-              >
-                {isLoading ? "Loading..." : isAuthenticated ? (user?.role === "manufacturer" ? "Manufacturer Portal" : "Dashboard") : "Get Started"}
-                <Zap className="ml-2 h-4 w-4" />
-              </Button>
+              {isLoading ? (
+                <Button
+                  disabled
+                  className="bg-gradient-to-r from-cyan-500 to-purple-500 text-white border-0 opacity-70"
+                >
+                  Loading...
+                </Button>
+              ) : isAuthenticated ? (
+                <Button
+                  onClick={handleGetStarted}
+                  className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-300"
+                >
+                  {user?.role === "manufacturer" ? "Manufacturer Portal" : "Dashboard"}
+                  <Zap className="ml-2 h-4 w-4" />
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    onClick={() => navigate("/auth")}
+                    variant="ghost"
+                    className="text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+                  >
+                    Login
+                  </Button>
+                  <Button
+                    onClick={() => navigate("/auth")}
+                    className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-300"
+                  >
+                    Register
+                    <Zap className="ml-2 h-4 w-4" />
+                  </Button>
+                </>
+              )}
             </motion.div>
           </div>
         </div>
