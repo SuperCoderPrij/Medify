@@ -18,10 +18,6 @@ export default function ManufacturerMedicines() {
   const deleteMedicine = useMutation(api.medicines.deleteMedicine);
   const { account, connectWallet, disconnectWallet } = useWeb3();
   
-  // Debug logs to verify component mounting and data fetching
-  console.log("ManufacturerMedicines component mounted");
-  console.log("Medicines data state:", medicines === undefined ? "loading" : "loaded", medicines);
-  
   const [selectedMedicine, setSelectedMedicine] = useState<any>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [medicineToDelete, setMedicineToDelete] = useState<any>(null);
