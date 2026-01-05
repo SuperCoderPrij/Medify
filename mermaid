@@ -1,0 +1,21 @@
+graph TD
+    A[Landing Page /] -->|Unauthenticated| B[Auth Page /auth]
+    A -->|Scan QR| C[Verify Page /verify]
+    
+    B -->|Login/Register Success| D{User Role}
+    
+    D -->|Consumer| E[Consumer Dashboard /app]
+    D -->|Manufacturer| F[Manufacturer Portal /manufacturer]
+    
+    C -->|Valid| G[Verification Success]
+    C -->|Invalid/Fake| H[Not Verified /not-verified]
+    
+    E -->|Scan QR| C
+    
+    F --> I[Dashboard /manufacturer/dashboard]
+    F --> J[My Medicines /manufacturer/medicines]
+    F --> K[Generate QR /manufacturer/generate-qr]
+    F --> L[Reports /manufacturer/reports]
+    
+    J -->|Action| M[Create Medicine /manufacturer/create]
+    J -->|Action| N[View Details / Blockchain]
