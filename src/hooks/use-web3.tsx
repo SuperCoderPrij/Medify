@@ -110,6 +110,7 @@ export function Web3Provider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (window.ethereum) {
+      console.log("Ethereum provider detected");
       const browserProvider = new ethers.BrowserProvider(window.ethereum);
       setProvider(browserProvider);
 
@@ -123,13 +124,15 @@ export function Web3Provider({ children }: { children: ReactNode }) {
             // In ethers v6, listAccounts returns Signer objects, we need the address
             accounts[0].getAddress().then((address) => {
                setAccount(address);
-            });
+            }).catch(console.error);
             
             browserProvider.getNetwork().then((network) => {
               setChainId(network.chainId.toString());
-            });
+            }).catch(console.error);
           }
         }
+      }).catch((err) => {
+        console.error("Error checking existing connection:", err);
       });
 
       // Listen for account changes
