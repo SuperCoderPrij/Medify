@@ -194,6 +194,11 @@ export default function Verify() {
                   <h2 className="text-2xl font-bold text-white mb-1">
                     {medicineData?.medicineName || nftData?.name || "Unknown Medicine"}
                   </h2>
+                  {medicineData?.manufacturerName && (
+                    <p className="text-gray-400 text-sm mb-1">
+                      by {medicineData.manufacturerName}
+                    </p>
+                  )}
                   <p className="text-cyan-400 font-mono text-sm">
                     {medicineData?.unit?.tokenId || nftData?.tokenId || tokenId}
                   </p>

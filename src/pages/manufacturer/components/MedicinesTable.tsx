@@ -25,6 +25,7 @@ export function MedicinesTable({
         <TableHeader className="bg-slate-950/50">
           <TableRow className="hover:bg-transparent border-cyan-500/20">
             <TableHead className="text-gray-400">Medicine Name</TableHead>
+            <TableHead className="text-gray-400">Manufacturer</TableHead>
             <TableHead className="text-gray-400">Batch No.</TableHead>
             <TableHead className="text-gray-400">Type</TableHead>
             <TableHead className="text-gray-400">Expiry Date</TableHead>
@@ -36,13 +37,13 @@ export function MedicinesTable({
         <TableBody>
           {medicines === undefined ? (
             <TableRow>
-              <TableCell colSpan={7} className="h-24 text-center text-gray-500">
+              <TableCell colSpan={8} className="h-24 text-center text-gray-500">
                 Loading medicines...
               </TableCell>
             </TableRow>
           ) : medicines.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className="h-32 text-center text-gray-500">
+              <TableCell colSpan={8} className="h-32 text-center text-gray-500">
                 No medicines found. Mint your first medicine NFT!
               </TableCell>
             </TableRow>
@@ -57,6 +58,7 @@ export function MedicinesTable({
                     {medicine.medicineName}
                   </div>
                 </TableCell>
+                <TableCell className="text-gray-300">{medicine.manufacturerName}</TableCell>
                 <TableCell className="text-gray-300">{medicine.batchNumber}</TableCell>
                 <TableCell className="text-gray-300 capitalize">{medicine.medicineType}</TableCell>
                 <TableCell className="text-gray-300">

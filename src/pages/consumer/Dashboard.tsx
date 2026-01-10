@@ -217,6 +217,7 @@ export default function ConsumerDashboard() {
                         {scanResult.medicine && (
                           <div className="text-sm space-y-1 text-gray-300">
                             <p>Name: <span className="text-white">{scanResult.medicine.medicineName}</span></p>
+                            <p>Manufacturer: <span className="text-white">{scanResult.medicine.manufacturerName}</span></p>
                             <p>Batch: <span className="text-white">{scanResult.medicine.batchNumber}</span></p>
                             <p>Expiry: <span className="text-white">{scanResult.medicine.expiryDate}</span></p>
                           </div>
@@ -268,6 +269,11 @@ export default function ConsumerDashboard() {
                       <div className="font-medium text-white">
                         {scan.medicine?.medicineName || "Unknown Item"}
                       </div>
+                      {scan.medicine?.manufacturerName && (
+                        <div className="text-xs text-gray-400">
+                          by {scan.medicine.manufacturerName}
+                        </div>
+                      )}
                       <div className="text-xs text-gray-400">
                         {new Date(scan._creationTime).toLocaleDateString()} • {new Date(scan._creationTime).toLocaleTimeString()}
                       </div>
