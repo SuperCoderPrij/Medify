@@ -2,29 +2,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import url('https://fonts.cdnfonts.com/css/samarkan');
 
-/* DO NOT CHANGE */
->>>>>>> REPLACE
-<<<<<<< SEARCH
-  .font-mono {
-    font-family: Menlo, "Courier New", monospace;
-  }
-  .font-samarkan {
-    font-family: 'Samarkan', sans-serif;
-  }
-}
-=======
-  .font-mono {
-    font-family: Menlo, "Courier New", monospace;
-  }
-  .font-samarkan {
-    font-family: 'Samarkan', sans-serif;
-  }
-}
 @import "tailwindcss";
 @import "tw-animate-css";
 @custom-variant dark (&:is(.dark *));
 
-/* DO NOT CHANGE */
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -150,5 +131,8 @@
   }
   .font-mono {
     font-family: Menlo, "Courier New", monospace;
+  }
+  .font-samarkan {
+    font-family: 'Samarkan', sans-serif;
   }
 }
