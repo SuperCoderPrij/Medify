@@ -68,12 +68,12 @@ export default function Landing() {
               onClick={() => navigate("/")}
             >
               <div className="relative">
+                <div className="absolute inset-0 blur-xl bg-cyan-400/20 rounded-full" />
                 <img 
                   src="https://harmless-tapir-303.convex.cloud/api/storage/c2ad483d-7d84-4cc6-8685-8946c6d6c394" 
                   alt="Dhanvantari Logo" 
-                  className="h-10 w-10 object-contain rounded-full" 
+                  className="relative h-10 w-10 object-contain rounded-full p-1" 
                 />
-                <div className="absolute inset-0 blur-xl bg-cyan-400/20 rounded-full" />
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
                 Dhanvantari

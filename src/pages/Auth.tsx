@@ -114,7 +114,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       alt="Dhanvantari Logo"
                       width={64}
                       height={64}
-                      className="rounded-full mb-4 mt-4 cursor-pointer object-contain"
+                      className="rounded-full mb-4 mt-4 cursor-pointer object-contain p-1"
                       onClick={() => navigate("/")}
                     />
                   </div>

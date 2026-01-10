@@ -10,10 +10,12 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router";
 
 const QRScanner = lazy(() => import("@/components/QRScanner"));
 
 export default function ConsumerDashboard() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [isScanning, setIsScanning] = useState(false);
   const [manualCode, setManualCode] = useState("");
@@ -118,11 +120,14 @@ export default function ConsumerDashboard() {
       <div className="max-w-md mx-auto relative z-10 space-y-6">
         {/* Header */}
         <header className="flex items-center justify-between py-4">
-          <div className="flex items-center gap-2">
+          <div 
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={() => navigate("/")}
+          >
             <img 
               src="https://harmless-tapir-303.convex.cloud/api/storage/c2ad483d-7d84-4cc6-8685-8946c6d6c394" 
               alt="Logo" 
-              className="h-8 w-8 object-contain rounded-full" 
+              className="h-8 w-8 object-contain rounded-full p-0.5" 
             />
             <span className="font-bold text-lg bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
               Dhanvantari
