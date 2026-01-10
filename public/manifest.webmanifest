@@ -1,7 +1,7 @@
 {
-  "name": "vly.ai application",
-  "short_name": "vly.ai",
-  "description": "vly.ai application",
+  "name": "Dhanvantari",
+  "short_name": "Dhanvantari",
+  "description": "Dhanvantari - Medicine Verification System",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

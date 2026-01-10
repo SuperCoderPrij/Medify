@@ -1,1 +1,1 @@
-pnpm install && npx convex dev --once && npx tsc -b --noEmit
+ls -R blockchain
