@@ -140,11 +140,18 @@ export default function Verify() {
         className="relative z-10 w-full max-w-2xl"
       >
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center p-3 bg-cyan-500/10 rounded-full mb-4">
-            <Shield className="h-10 w-10 text-cyan-400" />
+          <div 
+            className="inline-flex items-center justify-center mb-4 cursor-pointer hover:scale-105 transition-transform"
+            onClick={() => navigate("/")}
+          >
+            <img 
+              src="https://harmless-tapir-303.convex.cloud/api/storage/c2ad483d-7d84-4cc6-8685-8946c6d6c394" 
+              alt="Dhanvantari Logo" 
+              className="h-20 w-20 object-contain rounded-full p-1 bg-cyan-500/10" 
+            />
           </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-            PharmaAuth Verification
+            Dhanvantari Verification
           </h1>
         </div>
 
