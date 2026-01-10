@@ -5,12 +5,13 @@ import { AlertTriangle, Camera, CheckCircle, History, QrCode, Search, Shield, XC
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import QRScanner from "@/components/QRScanner";
+
+const QRScanner = lazy(() => import("@/components/QRScanner"));
 
 export default function ConsumerDashboard() {
   const { user } = useAuth();
@@ -167,10 +168,12 @@ export default function ConsumerDashboard() {
                     <DialogTitle>Scan Medicine QR</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
-                    <QRScanner 
-                      onScanSuccess={handleScanSuccess} 
-                      onScanFailure={(err) => console.log(err)}
-                    />
+                    <Suspense fallback={<div className="p-8 text-center text-gray-400">Loading Scanner...</div>}>
+                      <QRScanner 
+                        onScanSuccess={handleScanSuccess} 
+                        onScanFailure={(err) => console.log(err)}
+                      />
+                    </Suspense>
                     <div className="space-y-2">
                       <p className="text-sm text-gray-400">Or enter QR Data / Batch ID manually:</p>
                       <div className="flex gap-2">

@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import QRScanner from "@/components/QRScanner";
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { toast } from "sonner";
+
+const QRScanner = lazy(() => import("@/components/QRScanner"));
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -155,7 +156,9 @@ export default function Landing() {
                     <DialogTitle className="text-xl font-bold text-center mb-2">Scan Medicine QR</DialogTitle>
                   </DialogHeader>
                   <div className="w-full">
-                    <QRScanner onScanSuccess={handleScanSuccess} />
+                    <Suspense fallback={<div className="p-8 text-center text-gray-400">Loading Scanner...</div>}>
+                      <QRScanner onScanSuccess={handleScanSuccess} />
+                    </Suspense>
                   </div>
                 </DialogContent>
               </Dialog>
