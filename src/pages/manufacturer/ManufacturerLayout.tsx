@@ -80,7 +80,7 @@ export default function ManufacturerLayout() {
           <img 
             src="https://harmless-tapir-303.convex.cloud/api/storage/c2ad483d-7d84-4cc6-8685-8946c6d6c394" 
             alt="Logo" 
-            className="h-8 w-8 object-contain" 
+            className="h-8 w-8 object-contain rounded-full" 
           />
           <span className="font-bold text-lg bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
             Dhanvantari
@@ -140,7 +140,7 @@ export default function ManufacturerLayout() {
             <img 
               src="https://harmless-tapir-303.convex.cloud/api/storage/c2ad483d-7d84-4cc6-8685-8946c6d6c394" 
               alt="Logo" 
-              className="h-8 w-8 shrink-0 object-contain" 
+              className="h-8 w-8 shrink-0 object-contain rounded-full" 
             />
             {isSidebarOpen && (
               <motion.span
