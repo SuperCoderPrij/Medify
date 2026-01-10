@@ -118,7 +118,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       onClick={() => navigate("/")}
                     />
                   </div>
-                <CardTitle className="text-xl">Get Started</CardTitle>
+                <CardTitle className="text-xl font-samarkan tracking-wide text-2xl">Dhanvantari</CardTitle>
                 <CardDescription>
                   Enter your email to log in or sign up
                 </CardDescription>

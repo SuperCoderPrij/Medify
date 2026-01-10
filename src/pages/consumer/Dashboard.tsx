@@ -129,7 +129,7 @@ export default function ConsumerDashboard() {
               alt="Logo" 
               className="h-8 w-8 object-contain rounded-full p-0.5" 
             />
-            <span className="font-bold text-lg bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="font-bold text-lg bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-samarkan tracking-wide">
               Dhanvantari
             </span>
           </div>

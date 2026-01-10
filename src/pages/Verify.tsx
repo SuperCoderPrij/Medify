@@ -150,7 +150,7 @@ export default function Verify() {
               className="h-20 w-20 object-contain rounded-full p-1 bg-cyan-500/10" 
             />
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-samarkan tracking-wider">
             Dhanvantari Verification
           </h1>
         </div>
