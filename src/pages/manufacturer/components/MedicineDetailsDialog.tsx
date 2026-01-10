@@ -38,6 +38,10 @@ export function MedicineDetailsDialog({ isOpen, onOpenChange, medicine }: Medici
               <div className="font-medium text-lg">{medicine.medicineName}</div>
             </div>
             <div>
+              <label className="text-xs text-gray-500 uppercase tracking-wider">Manufacturer</label>
+              <div className="font-medium text-gray-300">{medicine.manufacturerName}</div>
+            </div>
+            <div>
               <label className="text-xs text-gray-500 uppercase tracking-wider">Batch Number</label>
               <div className="font-mono text-cyan-400">{medicine.batchNumber}</div>
             </div>
