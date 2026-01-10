@@ -75,7 +75,7 @@ export default function Landing() {
                   className="relative h-10 w-10 object-contain rounded-full p-1" 
                 />
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-samarkan tracking-wide">
                 Dhanvantari
               </span>
             </motion.div>
