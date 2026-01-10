@@ -77,9 +77,13 @@ export default function ManufacturerLayout() {
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-slate-900/80 backdrop-blur-md border-b border-cyan-500/20 z-50 flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <Shield className="h-6 w-6 text-cyan-400" />
+          <img 
+            src="https://harmless-tapir-303.convex.cloud/api/storage/2a6ec2fc-0b6b-4926-a3a2-316eccd24c4f" 
+            alt="Logo" 
+            className="h-8 w-8 object-contain" 
+          />
           <span className="font-bold text-lg bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-            PharmaAuth
+            Dhanvantari
           </span>
         </div>
         <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -133,14 +137,18 @@ export default function ManufacturerLayout() {
       >
         <div className="h-16 flex items-center px-6 border-b border-cyan-500/20">
           <div className="flex items-center gap-3 overflow-hidden whitespace-nowrap">
-            <Shield className="h-8 w-8 text-cyan-400 shrink-0" />
+            <img 
+              src="https://harmless-tapir-303.convex.cloud/api/storage/2a6ec2fc-0b6b-4926-a3a2-316eccd24c4f" 
+              alt="Logo" 
+              className="h-8 w-8 shrink-0 object-contain" 
+            />
             {isSidebarOpen && (
               <motion.span
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="font-bold text-xl bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent"
               >
-                PharmaAuth
+                Dhanvantari
               </motion.span>
             )}
           </div>

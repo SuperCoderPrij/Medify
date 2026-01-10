@@ -41,7 +41,7 @@ export default function ConsumerDashboard() {
     }
 
     if (!isValidUrl && !isValidJson) {
-      toast.error("Invalid QR Code. Please scan a valid PharmaAuth medicine QR code.");
+      toast.error("Invalid QR Code. Please scan a valid Dhanvantari medicine QR code.");
       return;
     }
     
@@ -119,9 +119,13 @@ export default function ConsumerDashboard() {
         {/* Header */}
         <header className="flex items-center justify-between py-4">
           <div className="flex items-center gap-2">
-            <Shield className="h-6 w-6 text-cyan-400" />
+            <img 
+              src="https://harmless-tapir-303.convex.cloud/api/storage/2a6ec2fc-0b6b-4926-a3a2-316eccd24c4f" 
+              alt="Logo" 
+              className="h-8 w-8 object-contain" 
+            />
             <span className="font-bold text-lg bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-              PharmaAuth
+              Dhanvantari
             </span>
           </div>
           <div className="h-8 w-8 rounded-full bg-gradient-to-br from-cyan-500 to-purple-500 flex items-center justify-center text-xs font-bold">

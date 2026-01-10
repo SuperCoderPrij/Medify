@@ -110,11 +110,11 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
               <CardHeader className="text-center">
               <div className="flex justify-center">
                     <img
-                      src="./logo.svg"
-                      alt="Lock Icon"
+                      src="https://harmless-tapir-303.convex.cloud/api/storage/2a6ec2fc-0b6b-4926-a3a2-316eccd24c4f"
+                      alt="Dhanvantari Logo"
                       width={64}
                       height={64}
-                      className="rounded-lg mb-4 mt-4 cursor-pointer"
+                      className="rounded-lg mb-4 mt-4 cursor-pointer object-contain"
                       onClick={() => navigate("/")}
                     />
                   </div>

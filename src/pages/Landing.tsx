@@ -38,7 +38,7 @@ export default function Landing() {
     }
 
     if (!isValidUrl && !isValidJson) {
-      toast.error("Invalid QR Code. Please scan a valid PharmaAuth medicine QR code.");
+      toast.error("Invalid QR Code. Please scan a valid Dhanvantari medicine QR code.");
       return;
     }
 
@@ -68,11 +68,15 @@ export default function Landing() {
               onClick={() => navigate("/")}
             >
               <div className="relative">
-                <Shield className="h-8 w-8 text-cyan-400" />
-                <div className="absolute inset-0 blur-xl bg-cyan-400/50" />
+                <img 
+                  src="https://harmless-tapir-303.convex.cloud/api/storage/2a6ec2fc-0b6b-4926-a3a2-316eccd24c4f" 
+                  alt="Dhanvantari Logo" 
+                  className="h-10 w-10 object-contain" 
+                />
+                <div className="absolute inset-0 blur-xl bg-cyan-400/20" />
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                PharmaAuth
+                Dhanvantari
               </span>
             </motion.div>
             
@@ -287,7 +291,7 @@ export default function Landing() {
       {/* Footer */}
       <footer className="relative z-10 border-t border-cyan-500/20 bg-slate-950/50 backdrop-blur-xl py-8 px-4">
         <div className="max-w-7xl mx-auto text-center text-gray-400">
-          <p>&copy; 2024 PharmaAuth. Powered by Blockchain Technology.</p>
+          <p>&copy; 2024 Dhanvantari. Powered by Blockchain Technology.</p>
         </div>
       </footer>
     </div>
