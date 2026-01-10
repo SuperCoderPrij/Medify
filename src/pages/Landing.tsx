@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Shield, Scan, Lock, Zap, CheckCircle, AlertTriangle } from "lucide-react";
+import { Shield, Scan, Lock, Zap, CheckCircle, AlertTriangle, Smartphone, Factory, ShieldCheck, FileText, Database, QrCode, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
 import { useAuth } from "@/hooks/use-auth";
@@ -204,61 +204,116 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="relative z-10 py-20 px-4">
+      {/* How It Works Section - Split View */}
+      <section className="relative z-10 py-24 px-4 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-20"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
               <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
                 How It Works
               </span>
             </h2>
-            <p className="text-xl text-gray-300">Three simple steps to verify authenticity</p>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              A dual-sided ecosystem ensuring trust from factory to pharmacy.
+            </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Lock,
-                title: "Mint NFT",
-                description: "Manufacturers create unique NFTs for each medicine batch on the blockchain",
-                color: "cyan",
-              },
-              {
-                icon: Scan,
-                title: "Scan QR Code",
-                description: "Consumers scan the QR code on medicine packaging using their phone camera",
-                color: "purple",
-              },
-              {
-                icon: CheckCircle,
-                title: "Verify Instantly",
-                description: "System checks blockchain and confirms if medicine is genuine or counterfeit",
-                color: "pink",
-              },
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
-                className="relative group"
-              >
-                <div className="bg-slate-900/50 backdrop-blur-xl border border-cyan-500/20 rounded-xl p-8 h-full hover:border-cyan-400/50 transition-all duration-300 shadow-[0_0_20px_rgba(34,211,238,0.1)] hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]">
-                  <div className={`inline-flex p-3 rounded-lg bg-${feature.color}-500/10 mb-4`}>
-                    <feature.icon className={`h-8 w-8 text-${feature.color}-400`} />
-                  </div>
-                  <h3 className="text-2xl font-bold mb-3 text-white">{feature.title}</h3>
-                  <p className="text-gray-300">{feature.description}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 relative">
+            {/* Center Divider (Desktop) */}
+            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-cyan-500/50 to-transparent -translate-x-1/2" />
+            
+            {/* Consumer Side */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="relative"
+            >
+              <div className="flex flex-col items-center md:items-end text-center md:text-right space-y-8">
+                <div className="bg-gradient-to-br from-purple-500/20 to-blue-500/20 p-4 rounded-2xl border border-purple-500/30 mb-4">
+                  <Smartphone className="w-12 h-12 text-purple-400" />
                 </div>
-              </motion.div>
-            ))}
+                <h3 className="text-3xl font-bold text-white mb-2">For Consumers</h3>
+                <p className="text-gray-400 mb-8 max-w-md">
+                  Instantly verify the authenticity of your medicines with a simple scan.
+                </p>
+                
+                <div className="space-y-6 w-full max-w-md">
+                  {[
+                    { title: "Scan QR Code", desc: "Use your phone camera to scan the secure QR on the package.", icon: Scan },
+                    { title: "Instant Verification", desc: "Immediate feedback on product authenticity via blockchain.", icon: ShieldCheck },
+                    { title: "View Details", desc: "See manufacturing date, expiry, and origin details.", icon: FileText },
+                  ].map((item, i) => (
+                    <motion.div 
+                      key={i}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.2 + (i * 0.1) }}
+                      className="bg-slate-900/50 p-4 rounded-xl border border-purple-500/10 hover:border-purple-500/40 transition-colors flex flex-row-reverse md:flex-row items-center gap-4"
+                    >
+                      <div className="flex-1 text-left md:text-right">
+                        <h4 className="font-semibold text-white">{item.title}</h4>
+                        <p className="text-sm text-gray-400">{item.desc}</p>
+                      </div>
+                      <div className="bg-purple-500/10 p-2 rounded-lg">
+                        <item.icon className="w-5 h-5 text-purple-400" />
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Manufacturer Side */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="relative"
+            >
+              <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-8">
+                <div className="bg-gradient-to-br from-cyan-500/20 to-teal-500/20 p-4 rounded-2xl border border-cyan-500/30 mb-4">
+                  <Factory className="w-12 h-12 text-cyan-400" />
+                </div>
+                <h3 className="text-3xl font-bold text-white mb-2">For Manufacturers</h3>
+                <p className="text-gray-400 mb-8 max-w-md">
+                  Secure your supply chain and protect your brand reputation.
+                </p>
+
+                <div className="space-y-6 w-full max-w-md">
+                  {[
+                    { title: "Mint Digital Twin", desc: "Create an immutable NFT record for each medicine batch.", icon: Database },
+                    { title: "Generate Secure QR", desc: "Print unique QR codes linked to blockchain records.", icon: QrCode },
+                    { title: "Track Analytics", desc: "Monitor scans and detect potential counterfeit attempts.", icon: BarChart3 },
+                  ].map((item, i) => (
+                    <motion.div 
+                      key={i}
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.2 + (i * 0.1) }}
+                      className="bg-slate-900/50 p-4 rounded-xl border border-cyan-500/10 hover:border-cyan-500/40 transition-colors flex items-center gap-4"
+                    >
+                      <div className="bg-cyan-500/10 p-2 rounded-lg">
+                        <item.icon className="w-5 h-5 text-cyan-400" />
+                      </div>
+                      <div className="text-left">
+                        <h4 className="font-semibold text-white">{item.title}</h4>
+                        <p className="text-sm text-gray-400">{item.desc}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
