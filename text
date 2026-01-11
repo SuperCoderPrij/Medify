@@ -1,13 +1,3 @@
-PharmaScan Navigation Hierarchy
-├── / (Landing Page)
-│   ├── /auth (Login/Register)
-│   ├── /verify (Verification Page)
-│   │   └── /not-verified (Verification Failed)
-│   ├── /app (Consumer Dashboard)
-│   └── /manufacturer (Manufacturer Portal)
-│       ├── /manufacturer/dashboard (Dashboard Overview)
-│       ├── /manufacturer/medicines (Medicine Management)
-│       │   └── /manufacturer/create (Mint New Medicine)
-│       ├── /manufacturer/generate-qr (QR Code Generation)
-│       └── /manufacturer/reports (Analytics & Reports)
-└── * (404 Not Found)
+File src/pages/Auth.tsx read in.
+File src/pages/consumer/Dashboard.tsx read in.
+File src/pages/Verify.tsx read in.
