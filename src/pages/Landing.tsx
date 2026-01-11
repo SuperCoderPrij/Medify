@@ -59,7 +59,7 @@ export default function Landing() {
       
       {/* Navbar */}
       <nav className="relative z-10 border-b border-cyan-500/20 bg-slate-950/50 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20 md:h-28 transition-all duration-300">
             <motion.div
               initial={{ opacity: 0, x: -20 }}

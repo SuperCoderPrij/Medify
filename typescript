@@ -1,8 +1,8 @@
-<Input
-  id="manufacturerName"
-  name="manufacturerName"
-  defaultValue={user?.name || ""}
-  placeholder="e.g. PharmaCorp Ltd."
-  className="bg-slate-950/50 border-slate-800 text-white"
-  required
-/>
+// src/pages/Landing.tsx
+// ...
+      {/* Navbar */}
+      <nav className="relative z-10 border-b border-cyan-500/20 bg-slate-950/50 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> // Added max-w-7xl and mx-auto here
+          <div className="flex justify-between items-center h-20 md:h-28 transition-all duration-300">
+            <motion.div
+// ... rest of the file
