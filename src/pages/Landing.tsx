@@ -17,10 +17,10 @@ export default function Landing() {
   }));
 
   return (
-    <div className="min-h-screen bg-[#05050a] text-white overflow-hidden relative">
+    <div className="min-h-screen bg-[#030014] text-white overflow-hidden relative">
       
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-[#05050a] to-[#05050a] z-0 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-[#030014] to-cyan-900/10 z-0 pointer-events-none" />
       
       {/* Animated Stars */}
       {stars.map((star) => (
