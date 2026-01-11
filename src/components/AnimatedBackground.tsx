@@ -58,7 +58,7 @@ export const AnimatedBackground = () => {
           {/* Purple Background Elements */}
           <g id="purplebg" opacity="0.65">
             {purpleBgElements.map((el) => (
-              <g key={el.id} style={{ animation: `up 2s ${el.delay}ms ease infinite alternate` }}>
+              <g key={el.id} style={{ animation: `up 2s ${el.delay}ms ease infinite alternate`, willChange: 'transform' }}>
                  {/* Simplified representation of the many polygons in purplebg for performance/code size */}
                  <polygon fill="#202333" points="1585,596.3 1666,646 1750,597.3 1668,548" />
                  <polygon fill="#202333" points="1464,527.3 1545,577 1629,528.3 1547,479" />
@@ -75,11 +75,11 @@ export const AnimatedBackground = () => {
           <g id="d-appswrapper">
             <g id="d-app">
                {/* Main D-App Structure */}
-               <g style={{ animation: 'updown 2s 200ms ease-in-out infinite alternate' }}>
+               <g style={{ animation: 'updown 2s 200ms ease-in-out infinite alternate', willChange: 'transform' }}>
                   <path fill="#808080" d="M612.3,427.9c-0.1-0.8-3.3,0.2-3.3,0.2v1.3l0.1-0.1l-48.9-28c0,0-4.5-3.1-10.6,0.6l-48.8,28c0,0-0.7,0.1-0.7,0.3V429c0,0-2.7-1-2.8-0.2c-0.4,2.3-0.1,1.9,0,3.5c0,1.1,0.8,2.3,3.1,3.5l47.5,27.5c0,0,7.1,3.9,14.6,0L610,435c0,0,2.3-1.4,2.5-3.4C612.8,430,612.7,430.1,612.3,427.9z" />
                   <path fill="#9A9A9A" d="M500.4,432.8l47.4,27.5c0,0,7.1,3.9,14.6,0L610,432c0,0,6.3-3.6-0.8-7.4l-49-28c0,0-4.6-3.1-10.7,0.6l-48.5,28C501,425.2,493.2,429,500.4,432.8z" />
                </g>
-               <g style={{ animation: 'updown 2s 400ms ease-in-out infinite alternate' }}>
+               <g style={{ animation: 'updown 2s 400ms ease-in-out infinite alternate', willChange: 'transform' }}>
                   <path fill="#E04D5A" d="M612.3,414.1c-0.1-0.8-3.3,0.2-3.3,0.2v1.3l0.1-0.1l-48.9-28c0,0-4.5-3.1-10.6,0.6l-48.8,28c0,0-0.7,0.1-0.7,0.3v-1.2c0,0-2.7-1-2.8-0.2c-0.4,2.3-0.1,1.9,0,3.5c0,1.1,0.8,2.3,3.1,3.5l47.5,27.5c0,0,7.1,3.9,14.6,0l47.6-28.3c0,0,2.3-1.4,2.5-3.4C612.8,416.2,612.7,416.3,612.3,414.1z" />
                   <path fill="#FF3D49" d="M500.4,419l47.4,27.5c0,0,7.1,3.9,14.6,0l47.6-28.3c0,0,6.3-3.6-0.8-7.4l-49-28c0,0-4.6-3.1-10.7,0.6l-48.5,28C501,411.4,493.2,415.2,500.4,419z" />
                </g>
@@ -95,7 +95,7 @@ export const AnimatedBackground = () => {
                      cx={500 + Math.random() * 100} 
                      cy={300 + Math.random() * 100} 
                      r={Math.random() * 1.5 + 0.5}
-                     style={{ animation: `dots 4s ${p.delay}ms ease infinite` }}
+                     style={{ animation: `dots 4s ${p.delay}ms ease infinite`, willChange: 'transform, opacity' }}
                    />
                  ))}
                </g>
@@ -130,7 +130,7 @@ export const AnimatedBackground = () => {
                 cy={600 + Math.random() * 150} 
                 r={1.6} 
                 fill="#FFFFFF"
-                style={{ animation: `particles 4s ${p.delay}ms ease infinite alternate, p 2s ease infinite alternate` }}
+                style={{ animation: `particles 4s ${p.delay}ms ease infinite alternate, p 2s ease infinite alternate`, willChange: 'transform, opacity' }}
               />
             ))}
           </g>
@@ -144,7 +144,7 @@ export const AnimatedBackground = () => {
                 cx={900 + Math.random() * 200} 
                 cy={650 + Math.random() * 150} 
                 r={1.6}
-                style={{ animation: `particles 4s ${p.delay}ms ease infinite alternate, p 2s ease infinite alternate` }}
+                style={{ animation: `particles 4s ${p.delay}ms ease infinite alternate, p 2s ease infinite alternate`, willChange: 'transform, opacity' }}
               />
             ))}
           </g>
