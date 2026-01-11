@@ -24,7 +24,7 @@ export const AnimatedBackground = () => {
 
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-[#0C0019]">
-      <div className="container w-full h-full flex items-center justify-center">
+      <div className="w-full h-full flex items-center justify-center">
         <svg
           version="1.1"
           id="Layer_1"
@@ -37,7 +37,8 @@ export const AnimatedBackground = () => {
           viewBox="0 0 2000 1200"
           enableBackground="new 0 0 2000 1200"
           xmlSpace="preserve"
-          className="max-w-full max-h-full"
+          preserveAspectRatio="xMidYMid slice"
+          className="w-full h-full"
         >
           <g>
             <line
