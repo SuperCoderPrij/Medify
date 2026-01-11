@@ -1,15 +1,13 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Shield, QrCode, CheckCircle, Activity, Lock, Smartphone, Database, Scan } from "lucide-react";
+import { ArrowRight, Shield, QrCode, CheckCircle, Activity, Lock, Smartphone, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
-import { BlockchainBackground } from "@/components/BlockchainBackground";
 
 export default function Landing() {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-slate-950 text-white overflow-hidden relative">
-      <BlockchainBackground />
       
       {/* Navigation */}
       <nav className="relative z-10 flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
@@ -40,7 +38,7 @@ export default function Landing() {
             className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-300"
           >
             Scan Now
-            <Scan className="ml-2 h-4 w-4" />
+            <QrCode className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </nav>
