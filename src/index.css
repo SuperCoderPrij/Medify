@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import url('https://fonts.cdnfonts.com/css/samarkan');
 
 html {
   background: #0C0019;
@@ -9,4 +10,8 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.font-samarkan {
+  font-family: 'Samarkan', sans-serif;
 }
