@@ -1,4 +1,5 @@
 import React from 'react';
+import { chunk1, chunk2, chunk3, chunk4 } from './svg_chunks';
 
 export const AnimatedBackground = () => {
   // Generate particles for loops
@@ -29,6 +30,8 @@ export const AnimatedBackground = () => {
     { points: "1300.9,313.8 1362.7,355.9 1431.9,313.9 1367.9,273.3", cx: 1360, cy: 310, color: "#E64852" },
     { points: "353.4,875.7 353.4,953 416.4,990.9 416.4,917.8", cx: 385, cy: 930, color: "#A91B37" } // 4th block
   ];
+
+  const fullPath = chunk1 + chunk2 + chunk3 + chunk4;
 
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-[#0C0019]">
@@ -61,6 +64,29 @@ export const AnimatedBackground = () => {
               x2="1430.3"
               y2="315.4"
             />
+          </g>
+          <g>
+            <g>
+              <linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="-26" y1="616" x2="2010" y2="616">
+                <stop offset="0" style={{ stopColor: '#202333' }} />
+                <stop offset="1" style={{ stopColor: '#5C1B99' }} />
+              </linearGradient>
+              <linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="-101.1755" y1="174.3284" x2="2085.1755" y2="1057.6716">
+                <stop offset="0" style={{ stopColor: '#202333' }} />
+                <stop offset="1" style={{ stopColor: '#5C6399' }} />
+              </linearGradient>
+              <rect x="-26" y="-10" display="none" fill="url(#SVGID_1_)" stroke="url(#SVGID_2_)" strokeMiterlimit="10" width="2036" height="1252" />
+              <linearGradient id="SVGID_3_" gradientUnits="userSpaceOnUse" x1="195.6219" y1="293.0284" x2="1744.3668" y2="918.762" gradientTransform="matrix(1 0 0 -1 0 1200)">
+                <stop offset="0" style={{ stopColor: '#202333' }} />
+                <stop offset="1" style={{ stopColor: '#5C6399' }} />
+              </linearGradient>
+              <path
+                opacity="0.75"
+                fill="url(#SVGID_3_)"
+                enableBackground="new "
+                d={fullPath}
+              />
+            </g>
           </g>
           
           {/* Purple Background Elements */}
