@@ -110,11 +110,11 @@ export default function Landing() {
                     Login
                   </Button>
                   <Button
-                    onClick={() => navigate("/auth")}
+                    onClick={() => setIsScanOpen(true)}
                     className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-300"
                   >
-                    Register
-                    <Zap className="ml-2 h-4 w-4" />
+                    Scan Now
+                    <Scan className="ml-2 h-4 w-4" />
                   </Button>
                 </>
               )}
