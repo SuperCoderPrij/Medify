@@ -10,12 +10,12 @@ export default function Landing() {
     <div className="min-h-screen bg-slate-950 text-white overflow-hidden relative">
       
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-slate-950 to-slate-950 z-0" />
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-slate-950 to-slate-950 z-0 pointer-events-none" />
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] z-0 pointer-events-none" />
 
       {/* Navigation */}
       <nav className="relative z-10 flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
-        <div className="flex items-center gap-2 md:gap-4 cursor-pointer">
+        <div className="flex items-center gap-2 md:gap-4 cursor-pointer" onClick={() => navigate("/")}>
           <div className="relative">
             <div className="absolute inset-0 blur-xl bg-cyan-400/20 rounded-full" />
             <img 
@@ -31,14 +31,20 @@ export default function Landing() {
         
         <div className="flex items-center gap-2 md:gap-3">
           <Button
-            onClick={() => navigate("/auth")}
+            onClick={() => {
+              console.log("Navigating to login");
+              navigate("/auth");
+            }}
             variant="ghost"
             className="text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
           >
             Login
           </Button>
           <Button
-            onClick={() => navigate("/auth?redirect=/app")}
+            onClick={() => {
+              console.log("Navigating to dashboard");
+              navigate("/auth?redirect=/app");
+            }}
             className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-300"
           >
             Dashboard
@@ -70,19 +76,25 @@ export default function Landing() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button
-                onClick={() => navigate("/auth?redirect=/app")}
+                onClick={() => {
+                  console.log("Navigating to scan/app");
+                  navigate("/auth?redirect=/app");
+                }}
                 size="lg"
-                className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-300 text-lg px-8 py-6"
+                className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-300 text-lg px-8 py-6 cursor-pointer"
               >
                 <QrCode className="mr-2 h-5 w-5" />
                 Scan Medicine Now
               </Button>
 
               <Button
-                onClick={() => navigate("/auth?redirect=/app")}
+                onClick={() => {
+                  console.log("Navigating to manufacturer");
+                  navigate("/auth?redirect=/manufacturer");
+                }}
                 size="lg"
                 variant="outline"
-                className="border-2 border-cyan-400/50 text-cyan-400 hover:bg-cyan-400/10 hover:border-cyan-400 transition-all duration-300 text-lg px-8 py-6"
+                className="border-2 border-cyan-400/50 text-cyan-400 hover:bg-cyan-400/10 hover:border-cyan-400 transition-all duration-300 text-lg px-8 py-6 cursor-pointer"
               >
                 <Lock className="mr-2 h-5 w-5" />
                 Manufacturer Portal
@@ -244,9 +256,12 @@ export default function Landing() {
             Join thousands of manufacturers and consumers fighting counterfeit medicines
           </p>
           <Button
-            onClick={() => navigate("/auth?redirect=/app")}
+            onClick={() => {
+              console.log("Navigating to scan/app");
+              navigate("/auth?redirect=/app");
+            }}
             size="lg"
-            className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_30px_rgba(34,211,238,0.4)] hover:shadow-[0_0_40px_rgba(34,211,238,0.6)] transition-all duration-300 text-lg px-8 py-6"
+            className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_30px_rgba(34,211,238,0.4)] hover:shadow-[0_0_40px_rgba(34,211,238,0.6)] transition-all duration-300 text-lg px-8 py-6 cursor-pointer"
           >
             Get Started Now
             <ArrowRight className="ml-2 h-5 w-5" />
