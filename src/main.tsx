@@ -9,6 +9,7 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router";
 import "./index.css";
 import "./types/global.d.ts";
 import { Web3Provider } from "@/hooks/use-web3";
+import { PageLoader } from "@/components/PageLoader";
 
 // Lazy load route components for better code splitting
 const Landing = lazy(() => import("./pages/Landing.tsx"));
@@ -28,11 +29,7 @@ const NotVerified = lazy(() => import("./pages/NotVerified.tsx"));
 
 // Simple loading fallback for route transitions
 function RouteLoading() {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-pulse text-muted-foreground">Loading...</div>
-    </div>
-  );
+  return <PageLoader />;
 }
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
