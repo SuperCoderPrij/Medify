@@ -22,6 +22,13 @@ export const AnimatedBackground = () => {
     delay: 1000 + (i + 1) * 50,
   }));
 
+  // Glow elements for the red blocks trail effect
+  const glowElements = Array.from({ length: 5 }).map((_, i) => ({
+    id: i,
+    // They all share the same animation in the original CSS
+    delay: 1000, 
+  }));
+
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-[#0C0019]">
       <div className="w-full h-full flex items-center justify-center">
@@ -103,19 +110,32 @@ export const AnimatedBackground = () => {
           </g>
 
           {/* Red Blocks Animation */}
-          <g id="redblocks" className="animate-moveblocks">
+          <g id="redblocks">
              <polygon fill="#A91B37" points="1300.9,313.8 1300.9,391.1 1362.9,429 1362.9,355.9" />
              <polygon fill="#FF999F" points="1363,355.9 1363,429 1432,391.1 1432,313.8" />
              <polygon fill="#E64852" points="1300.9,313.8 1362.7,355.9 1431.9,313.9 1367.9,273.3" />
           </g>
 
-          <g id="firstBlock" className="animate-firstBlock">
+          {/* Glow Effect for Red Blocks (formerly redblocksparticles) */}
+          <g id="redblocksparticles">
+            {glowElements.map((el) => (
+              <g key={el.id}>
+                <polygon 
+                  fill="#E64852" 
+                  points="1300.9,313.8 1362.7,355.9 1431.9,313.9 1367.9,273.3" 
+                  style={{ opacity: 0.35, animation: `glow 4s ${el.delay}ms ease infinite`, willChange: 'opacity' }}
+                />
+              </g>
+            ))}
+          </g>
+
+          <g id="firstBlock">
              <polygon fill="#A91B37" points="1300.9,313.8 1300.9,391.1 1362.9,429 1362.9,355.9" />
              <polygon fill="#FF999F" points="1363,355.9 1363,429 1432,391.1 1432,313.8" />
              <polygon fill="#E64852" points="1300.9,313.8 1362.7,355.9 1431.9,313.9 1367.9,273.3" />
           </g>
 
-          <g id="blockdis" className="animate-blockdis">
+          <g id="blockdis">
              <polygon fill="#A91B37" points="353.4,875.7 353.4,953 416.4,990.9 416.4,917.8" />
              <polygon fill="#FF999F" points="416,917.8 416,990.9 484,953 484,875.7" />
              <polygon fill="#E64852" points="353.1,875.8 416,918.6 484.4,875.7 420.3,835.1" />
