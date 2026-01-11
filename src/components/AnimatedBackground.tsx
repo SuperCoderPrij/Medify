@@ -22,6 +22,14 @@ export const AnimatedBackground = () => {
     delay: 1000 + (i + 1) * 50,
   }));
 
+  // Data for the red blocks to generate particles around them
+  const redBlocksData = [
+    { points: "1300.9,313.8 1300.9,391.1 1362.9,429 1362.9,355.9", cx: 1330, cy: 370, color: "#A91B37" },
+    { points: "1363,355.9 1363,429 1432,391.1 1432,313.8", cx: 1400, cy: 370, color: "#FF999F" },
+    { points: "1300.9,313.8 1362.7,355.9 1431.9,313.9 1367.9,273.3", cx: 1360, cy: 310, color: "#E64852" },
+    { points: "353.4,875.7 353.4,953 416.4,990.9 416.4,917.8", cx: 385, cy: 930, color: "#A91B37" } // 4th block
+  ];
+
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-[#0C0019]">
       <div className="w-full h-full flex items-center justify-center">
@@ -72,14 +80,12 @@ export const AnimatedBackground = () => {
           {/* D-App Wrapper */}
           <g id="d-appswrapper">
             <g id="d-app">
-               <g style={{ animation: 'updown 2s 200ms ease-in-out infinite alternate', willChange: 'transform' }}>
-                  <path fill="#808080" d="M612.3,427.9c-0.1-0.8-3.3,0.2-3.3,0.2v1.3l0.1-0.1l-48.9-28c0,0-4.5-3.1-10.6,0.6l-48.8,28c0,0-0.7,0.1-0.7,0.3V429c0,0-2.7-1-2.8-0.2c-0.4,2.3-0.1,1.9,0,3.5c0,1.1,0.8,2.3,3.1,3.5l47.5,27.5c0,0,7.1,3.9,14.6,0L610,435c0,0,2.3-1.4,2.5-3.4C612.8,430,612.7,430.1,612.3,427.9z" />
-                  <path fill="#9A9A9A" d="M500.4,432.8l47.4,27.5c0,0,7.1,3.9,14.6,0L610,432c0,0,6.3-3.6-0.8-7.4l-49-28c0,0-4.6-3.1-10.7,0.6l-48.5,28C501,425.2,493.2,429,500.4,432.8z" />
-               </g>
-               <g style={{ animation: 'updown 2s 400ms ease-in-out infinite alternate', willChange: 'transform' }}>
-                  <path fill="#E04D5A" d="M612.3,414.1c-0.1-0.8-3.3,0.2-3.3,0.2v1.3l0.1-0.1l-48.9-28c0,0-4.5-3.1-10.6,0.6l-48.8,28c0,0-0.7,0.1-0.7,0.3v-1.2c0,0-2.7-1-2.8-0.2c-0.4,2.3-0.1,1.9,0,3.5c0,1.1,0.8,2.3,3.1,3.5l47.5,27.5c0,0,7.1,3.9,14.6,0l47.6-28.3c0,0,2.3-1.4,2.5-3.4C612.8,416.2,612.7,416.3,612.3,414.1z" />
-                  <path fill="#FF3D49" d="M500.4,419l47.4,27.5c0,0,7.1,3.9,14.6,0l47.6-28.3c0,0,6.3-3.6-0.8-7.4l-49-28c0,0-4.6-3.1-10.7,0.6l-48.5,28C501,411.4,493.2,415.2,500.4,419z" />
-               </g>
+               {[1, 2, 3, 4].map((i) => (
+                 <g key={i} style={{ animation: `updown 2s ${i * 200}ms ease-in-out infinite alternate`, willChange: 'transform' }}>
+                    <path fill="#808080" d="M612.3,427.9c-0.1-0.8-3.3,0.2-3.3,0.2v1.3l0.1-0.1l-48.9-28c0,0-4.5-3.1-10.6,0.6l-48.8,28c0,0-0.7,0.1-0.7,0.3V429c0,0-2.7-1-2.8-0.2c-0.4,2.3-0.1,1.9,0,3.5c0,1.1,0.8,2.3,3.1,3.5l47.5,27.5c0,0,7.1,3.9,14.6,0L610,435c0,0,2.3-1.4,2.5-3.4C612.8,430,612.7,430.1,612.3,427.9z" />
+                    <path fill="#9A9A9A" d="M500.4,432.8l47.4,27.5c0,0,7.1,3.9,14.6,0L610,432c0,0,6.3-3.6-0.8-7.4l-49-28c0,0-4.6-3.1-10.7,0.6l-48.5,28C501,425.2,493.2,429,500.4,432.8z" />
+                 </g>
+               ))}
             </g>
             
             {/* Particles around D-App */}
@@ -92,7 +98,7 @@ export const AnimatedBackground = () => {
                      cx={500 + Math.random() * 100} 
                      cy={300 + Math.random() * 100} 
                      r={Math.random() * 1.5 + 0.5}
-                     style={{ animation: `dots 4s ${p.delay}ms ease infinite`, willChange: 'transform, opacity' }}
+                     style={{ animation: `updown 2s ${p.id * 50}ms ease infinite alternate`, willChange: 'transform' }}
                    />
                  ))}
                </g>
@@ -116,6 +122,32 @@ export const AnimatedBackground = () => {
              <polygon fill="#A91B37" points="353.4,875.7 353.4,953 416.4,990.9 416.4,917.8" />
              <polygon fill="#FF999F" points="416,917.8 416,990.9 484,953 484,875.7" />
              <polygon fill="#E64852" points="353.1,875.8 416,918.6 484.4,875.7 420.3,835.1" />
+          </g>
+
+          {/* Red Blocks Particles & Glow */}
+          <g id="redblocksparticles">
+            {redBlocksData.map((block, index) => (
+              <g key={index}>
+                <polygon 
+                  points={block.points} 
+                  fill={block.color} 
+                  opacity="0.35" 
+                  style={{ animation: 'glow 4s 1s ease infinite', willChange: 'opacity' }} 
+                />
+                <g>
+                  {redBlockParticles.map((p) => (
+                    <circle 
+                      key={p.id}
+                      fill="#FFFFFF"
+                      cx={block.cx + (Math.random() * 60 - 30)}
+                      cy={block.cy + (Math.random() * 60 - 30)}
+                      r={Math.random() * 1.5 + 0.5}
+                      style={{ animation: `dots 4s ${p.delay}ms ease infinite`, willChange: 'transform, opacity' }}
+                    />
+                  ))}
+                </g>
+              </g>
+            ))}
           </g>
 
           {/* Red Glow Particles */}
