@@ -1,7 +1,1 @@
-{
-  "file_paths": [
-    "src/pages/Landing.tsx",
-    "src/index.css"
-  ],
-  "replace_files_in_context": true
-}
+{"type":"tool_call","tool_number":1,"tool_name":"readFilesToContextTool","input_args":{"file_paths":["src/pages/Auth.tsx"],"replace_files_in_context":false}}
