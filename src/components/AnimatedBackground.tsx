@@ -22,13 +22,6 @@ export const AnimatedBackground = () => {
     delay: 1000 + (i + 1) * 50,
   }));
 
-  // Glow elements for the red blocks trail effect
-  const glowElements = Array.from({ length: 5 }).map((_, i) => ({
-    id: i,
-    // They all share the same animation in the original CSS
-    delay: 1000, 
-  }));
-
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-[#0C0019]">
       <div className="w-full h-full flex items-center justify-center">
@@ -66,13 +59,11 @@ export const AnimatedBackground = () => {
           <g id="purplebg" opacity="0.65">
             {purpleBgElements.map((el) => (
               <g key={el.id} style={{ animation: `up 2s ${el.delay}ms ease infinite alternate`, willChange: 'transform' }}>
-                 {/* Simplified representation of the many polygons in purplebg for performance/code size */}
                  <polygon fill="#202333" points="1585,596.3 1666,646 1750,597.3 1668,548" />
                  <polygon fill="#202333" points="1464,527.3 1545,577 1629,528.3 1547,479" />
                  <polygon fill="#202333" points="1047,224.3 1128,274 1212,225.3 1130,176" />
                  <polygon fill="#202333" points="1720,524.3 1801,574 1885,525.3 1803,476" />
                  <polygon fill="#202333" points="1831,596.3 1912,646 1996,597.3 1914,548" />
-                 {/* Add more random scattered blocks to simulate the effect */}
                  <polygon fill="#202333" points={`${100 + el.id * 50},${500 + (el.id % 2) * 50} ${180 + el.id * 50},${550 + (el.id % 2) * 50} ${260 + el.id * 50},${500 + (el.id % 2) * 50} ${180 + el.id * 50},${450 + (el.id % 2) * 50}`} opacity="0.5" />
               </g>
             ))}
@@ -81,7 +72,6 @@ export const AnimatedBackground = () => {
           {/* D-App Wrapper */}
           <g id="d-appswrapper">
             <g id="d-app">
-               {/* Main D-App Structure */}
                <g style={{ animation: 'updown 2s 200ms ease-in-out infinite alternate', willChange: 'transform' }}>
                   <path fill="#808080" d="M612.3,427.9c-0.1-0.8-3.3,0.2-3.3,0.2v1.3l0.1-0.1l-48.9-28c0,0-4.5-3.1-10.6,0.6l-48.8,28c0,0-0.7,0.1-0.7,0.3V429c0,0-2.7-1-2.8-0.2c-0.4,2.3-0.1,1.9,0,3.5c0,1.1,0.8,2.3,3.1,3.5l47.5,27.5c0,0,7.1,3.9,14.6,0L610,435c0,0,2.3-1.4,2.5-3.4C612.8,430,612.7,430.1,612.3,427.9z" />
                   <path fill="#9A9A9A" d="M500.4,432.8l47.4,27.5c0,0,7.1,3.9,14.6,0L610,432c0,0,6.3-3.6-0.8-7.4l-49-28c0,0-4.6-3.1-10.7,0.6l-48.5,28C501,425.2,493.2,429,500.4,432.8z" />
@@ -114,10 +104,6 @@ export const AnimatedBackground = () => {
              <polygon fill="#A91B37" points="1300.9,313.8 1300.9,391.1 1362.9,429 1362.9,355.9" />
              <polygon fill="#FF999F" points="1363,355.9 1363,429 1432,391.1 1432,313.8" />
              <polygon fill="#E64852" points="1300.9,313.8 1362.7,355.9 1431.9,313.9 1367.9,273.3" />
-          </g>
-
-          {/* Glow Effect for Red Blocks (formerly redblocksparticles) */}
-          <g id="redblocksparticles">
           </g>
 
           <g id="firstBlock">
