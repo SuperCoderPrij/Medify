@@ -118,15 +118,6 @@ export const AnimatedBackground = () => {
 
           {/* Glow Effect for Red Blocks (formerly redblocksparticles) */}
           <g id="redblocksparticles">
-            {glowElements.map((el) => (
-              <g key={el.id}>
-                <polygon 
-                  fill="#E64852" 
-                  points="1300.9,313.8 1362.7,355.9 1431.9,313.9 1367.9,273.3" 
-                  style={{ opacity: 0.35, animation: `glow 4s ${el.delay}ms ease infinite`, willChange: 'opacity' }}
-                />
-              </g>
-            ))}
           </g>
 
           <g id="firstBlock">
