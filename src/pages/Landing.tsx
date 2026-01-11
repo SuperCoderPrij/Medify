@@ -6,7 +6,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useState, lazy, Suspense } from "react";
 import { toast } from "sonner";
-import { AnimatedBackground } from "@/components/AnimatedBackground";
 
 const QRScanner = lazy(() => import("@/components/QRScanner"));
 
@@ -54,8 +53,7 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen text-white overflow-hidden relative">
-      <AnimatedBackground />
+    <div className="min-h-screen text-white overflow-hidden relative bg-[#0C0019]">
       
       {/* Navbar */}
       <nav className="relative z-10 border-b border-cyan-500/20 bg-slate-950/50 backdrop-blur-xl">
