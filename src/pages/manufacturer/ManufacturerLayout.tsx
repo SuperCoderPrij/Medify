@@ -18,7 +18,8 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWeb3 } from "@/hooks/use-web3";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
+import { PageLoader } from "@/components/PageLoader";
 
 export default function ManufacturerLayout() {
   const { isAuthenticated, isLoading, signOut, user } = useAuth();
@@ -266,8 +267,14 @@ export default function ManufacturerLayout() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto relative z-10 pt-16 lg:pt-0">
-        <div className="max-w-7xl mx-auto p-6 lg:p-8">
-          <Outlet />
+        <div className="max-w-7xl mx-auto p-6 lg:p-8 min-h-[calc(100vh-4rem)] lg:min-h-screen">
+          <Suspense fallback={
+            <div className="h-full w-full flex items-center justify-center min-h-[50vh]">
+              <PageLoader className="min-h-0 bg-transparent backdrop-blur-sm" />
+            </div>
+          }>
+            <Outlet />
+          </Suspense>
         </div>
       </main>
     </div>
