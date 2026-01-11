@@ -1,123 +1,47 @@
 import { motion } from "framer-motion";
-import { Shield, Scan, Lock, Zap, CheckCircle, AlertTriangle, Smartphone, Factory, ShieldCheck, FileText, Database, QrCode, BarChart3 } from "lucide-react";
+import { ArrowRight, Shield, QrCode, CheckCircle, Activity, Lock, Smartphone, Database, Scan } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
-import { useAuth } from "@/hooks/use-auth";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useState, lazy, Suspense } from "react";
-import { toast } from "sonner";
-
-const QRScanner = lazy(() => import("@/components/QRScanner"));
+import { BlockchainBackground } from "@/components/BlockchainBackground";
 
 export default function Landing() {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading, user } = useAuth();
-  const [isScanOpen, setIsScanOpen] = useState(false);
-
-  const handleGetStarted = () => {
-    if (isAuthenticated) {
-      if (user?.role === "manufacturer") {
-        navigate("/manufacturer");
-      } else {
-        navigate("/app");
-      }
-    } else {
-      navigate("/auth?redirect=/app");
-    }
-  };
-
-  const handleScanSuccess = (decodedText: string) => {
-    // Validate QR Code
-    const isValidUrl = decodedText.includes("/verify?");
-    let isValidJson = false;
-    try {
-      const parsed = JSON.parse(decodedText);
-      if (parsed.id || parsed.batch || parsed.contract) isValidJson = true;
-    } catch (e) {
-      // Not JSON
-    }
-
-    if (!isValidUrl && !isValidJson) {
-      toast.error("Invalid QR Code. Please scan a valid Dhanvantari medicine QR code.");
-      return;
-    }
-
-    setIsScanOpen(false);
-    if (decodedText.includes("/verify?")) {
-      window.location.href = decodedText;
-    } else {
-      // If it's not a URL, maybe redirect to app with the code?
-      // For now, just redirect to app
-      navigate("/app");
-    }
-  };
 
   return (
-    <div className="min-h-screen text-white overflow-hidden relative bg-[#0C0019]">
+    <div className="min-h-screen bg-slate-950 text-white overflow-hidden relative">
+      <BlockchainBackground />
       
-      {/* Navbar */}
-      <nav className="relative z-10 border-b border-cyan-500/20 bg-slate-950/50 backdrop-blur-xl">
-        <div className="w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-[76px] md:h-[106px] transition-all duration-300">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-2 md:gap-4 cursor-pointer"
-              onClick={() => navigate("/")}
-            >
-              <div className="relative">
-                <div className="absolute inset-0 blur-xl bg-cyan-400/20 rounded-full" />
-                <img 
-                  src="https://harmless-tapir-303.convex.cloud/api/storage/c2ad483d-7d84-4cc6-8685-8946c6d6c394" 
-                  alt="Dhanvantari Logo" 
-                  className="relative h-[46px] w-[46px] md:h-[76px] md:w-[76px] object-contain rounded-full p-1 transition-all duration-300" 
-                />
-              </div>
-              <span className="text-[28px] md:text-[46px] font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-samarkan tracking-wide transition-all duration-300">
-                Dhanvantari
-              </span>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-2 md:gap-3"
-            >
-              {isLoading ? (
-                <Button
-                  disabled
-                  className="bg-gradient-to-r from-cyan-500 to-purple-500 text-white border-0 opacity-70"
-                >
-                  Loading...
-                </Button>
-              ) : isAuthenticated ? (
-                <Button
-                  onClick={handleGetStarted}
-                  className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-300"
-                >
-                  {user?.role === "manufacturer" ? "Manufacturer Portal" : "Dashboard"}
-                  <Zap className="ml-2 h-4 w-4" />
-                </Button>
-              ) : (
-                <>
-                  <Button
-                    onClick={() => navigate("/auth")}
-                    variant="ghost"
-                    className="text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
-                  >
-                    Login
-                  </Button>
-                  <Button
-                    onClick={() => setIsScanOpen(true)}
-                    className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-300"
-                  >
-                    Scan Now
-                    <Scan className="ml-2 h-4 w-4" />
-                  </Button>
-                </>
-              )}
-            </motion.div>
+      {/* Navigation */}
+      <nav className="relative z-10 flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
+        <div className="flex items-center gap-2 md:gap-4 cursor-pointer">
+          <div className="relative">
+            <div className="absolute inset-0 blur-xl bg-cyan-400/20 rounded-full" />
+            <img 
+              src="https://harmless-tapir-303.convex.cloud/api/storage/c2ad483d-7d84-4cc6-8685-8946c6d6c394" 
+              alt="Dhanvantari Logo" 
+              className="relative h-[46px] w-[46px] md:h-[76px] md:w-[76px] object-contain rounded-full p-1 transition-all duration-300" 
+            />
           </div>
+          <span className="text-[28px] md:text-[46px] font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-samarkan tracking-wide transition-all duration-300">
+            Dhanvantari
+          </span>
+        </div>
+        
+        <div className="flex items-center gap-2 md:gap-3">
+          <Button
+            onClick={() => navigate("/auth")}
+            variant="ghost"
+            className="text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            Login
+          </Button>
+          <Button
+            onClick={() => navigate("/auth?redirect=/app")}
+            className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-300"
+          >
+            Scan Now
+            <Scan className="ml-2 h-4 w-4" />
+          </Button>
         </div>
       </nav>
 
@@ -143,30 +67,8 @@ export default function Landing() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Dialog open={isScanOpen} onOpenChange={setIsScanOpen}>
-                <DialogTrigger asChild>
-                  <Button
-                    size="lg"
-                    className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_30px_rgba(34,211,238,0.4)] hover:shadow-[0_0_40px_rgba(34,211,238,0.6)] transition-all duration-300 text-lg px-8 py-6"
-                  >
-                    <Scan className="mr-2 h-5 w-5" />
-                    Scan Medicine Now
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="bg-slate-900 border-slate-800 text-white sm:max-w-xl max-h-[90vh] overflow-y-auto p-6">
-                  <DialogHeader>
-                    <DialogTitle className="text-xl font-bold text-center mb-2">Scan Medicine QR</DialogTitle>
-                  </DialogHeader>
-                  <div className="w-full">
-                    <Suspense fallback={<div className="p-8 text-center text-gray-400">Loading Scanner...</div>}>
-                      <QRScanner onScanSuccess={handleScanSuccess} />
-                    </Suspense>
-                  </div>
-                </DialogContent>
-              </Dialog>
-              
               <Button
-                onClick={() => navigate("/manufacturer")}
+                onClick={() => navigate("/auth?redirect=/app")}
                 size="lg"
                 variant="outline"
                 className="border-2 border-cyan-400/50 text-cyan-400 hover:bg-cyan-400/10 hover:border-cyan-400 transition-all duration-300 text-lg px-8 py-6"
@@ -186,8 +88,8 @@ export default function Landing() {
           >
             {[
               { label: "Medicines Protected", value: "10K+", icon: Shield },
-              { label: "Scans Performed", value: "50K+", icon: Scan },
-              { label: "Counterfeits Detected", value: "500+", icon: AlertTriangle },
+              { label: "Scans Performed", value: "50K+", icon: QrCode },
+              { label: "Counterfeits Detected", value: "500+", icon: Activity },
             ].map((stat, index) => (
               <div
                 key={index}
@@ -244,9 +146,9 @@ export default function Landing() {
                 
                 <div className="space-y-6 w-full max-w-md">
                   {[
-                    { title: "Scan QR Code", desc: "Use your phone camera to scan the secure QR on the package.", icon: Scan },
-                    { title: "Instant Verification", desc: "Immediate feedback on product authenticity via blockchain.", icon: ShieldCheck },
-                    { title: "View Details", desc: "See manufacturing date, expiry, and origin details.", icon: FileText },
+                    { title: "Scan QR Code", desc: "Use your phone camera to scan the secure QR on the package.", icon: QrCode },
+                    { title: "Instant Verification", desc: "Immediate feedback on product authenticity via blockchain.", icon: CheckCircle },
+                    { title: "View Details", desc: "See manufacturing date, expiry, and origin details.", icon: Database },
                   ].map((item, i) => (
                     <motion.div 
                       key={i}
@@ -279,7 +181,7 @@ export default function Landing() {
             >
               <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-8">
                 <div className="bg-gradient-to-br from-cyan-500/20 to-teal-500/20 p-4 rounded-2xl border border-cyan-500/30 mb-4">
-                  <Factory className="w-12 h-12 text-cyan-400" />
+                  <Database className="w-12 h-12 text-cyan-400" />
                 </div>
                 <h3 className="text-3xl font-bold text-white mb-2">For Manufacturers</h3>
                 <p className="text-gray-400 mb-8 max-w-md">
@@ -290,7 +192,7 @@ export default function Landing() {
                   {[
                     { title: "Mint Digital Twin", desc: "Create an immutable NFT record for each medicine batch.", icon: Database },
                     { title: "Generate Secure QR", desc: "Print unique QR codes linked to blockchain records.", icon: QrCode },
-                    { title: "Track Analytics", desc: "Monitor scans and detect potential counterfeit attempts.", icon: BarChart3 },
+                    { title: "Track Analytics", desc: "Monitor scans and detect potential counterfeit attempts.", icon: Activity },
                   ].map((item, i) => (
                     <motion.div 
                       key={i}
@@ -331,12 +233,12 @@ export default function Landing() {
             Join thousands of manufacturers and consumers fighting counterfeit medicines
           </p>
           <Button
-            onClick={handleGetStarted}
+            onClick={() => navigate("/auth?redirect=/app")}
             size="lg"
             className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_30px_rgba(34,211,238,0.4)] hover:shadow-[0_0_40px_rgba(34,211,238,0.6)] transition-all duration-300 text-lg px-8 py-6"
           >
             Get Started Now
-            <Zap className="ml-2 h-5 w-5" />
+            <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </motion.div>
       </section>

@@ -1,6 +1,7 @@
 {
   "file_paths": [
-    "package.json"
+    "src/pages/Landing.tsx",
+    "src/index.css"
   ],
-  "replace_files_in_context": false
+  "replace_files_in_context": true
 }
