@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useState, lazy, Suspense } from "react";
 import { toast } from "sonner";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 
 const QRScanner = lazy(() => import("@/components/QRScanner"));
 
@@ -53,9 +54,8 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 text-white overflow-hidden">
-      {/* Animated background grid */}
-      <div className="fixed inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
+    <div className="min-h-screen text-white overflow-hidden relative">
+      <AnimatedBackground />
       
       {/* Navbar */}
       <nav className="relative z-10 border-b border-cyan-500/20 bg-slate-950/50 backdrop-blur-xl">
