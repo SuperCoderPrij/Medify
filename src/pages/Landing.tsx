@@ -60,11 +60,11 @@ export default function Landing() {
       {/* Navbar */}
       <nav className="relative z-10 border-b border-cyan-500/20 bg-slate-950/50 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-24">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-3 cursor-pointer"
+              className="flex items-center gap-4 cursor-pointer"
               onClick={() => navigate("/")}
             >
               <div className="relative">
@@ -72,10 +72,10 @@ export default function Landing() {
                 <img 
                   src="https://harmless-tapir-303.convex.cloud/api/storage/c2ad483d-7d84-4cc6-8685-8946c6d6c394" 
                   alt="Dhanvantari Logo" 
-                  className="relative h-10 w-10 object-contain rounded-full p-1" 
+                  className="relative h-16 w-16 object-contain rounded-full p-1" 
                 />
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-samarkan tracking-wide">
+              <span className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-samarkan tracking-wide">
                 Dhanvantari
               </span>
             </motion.div>
