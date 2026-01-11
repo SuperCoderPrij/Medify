@@ -146,6 +146,7 @@
   transform-style: preserve-3d;
   perspective: 2000px;
   transform: rotateX(-30deg) rotateY(-45deg);
+  will-change: transform;
 }
 .loader-holder {
   position: absolute;
@@ -154,6 +155,7 @@
   transform: translate(-50%, -50%);
   transform-style: preserve-3d;
   transform: translate3d(0em, 3em, 1.5em);
+  will-change: transform;
 }
 .loader-holder:last-child {
   transform: rotateY(-90deg) rotateX(90deg) translate3d(0, 3em, 1.5em);
@@ -197,6 +199,7 @@
   animation: ani-box 6s infinite;
   width: 3em;
   height: 3em;
+  will-change: transform;
 }
 .loader-box:before, .loader-box:after {
   position: absolute;
