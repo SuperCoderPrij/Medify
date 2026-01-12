@@ -86,10 +86,10 @@ export default function ManufacturerReports() {
                     <div>
                       <h4 className="text-sm font-medium text-gray-400 mb-1">Medicine Details</h4>
                       <div className="text-white font-medium">
-                        {report.medicine?.medicineName || "Unknown Medicine"}
+                        {report.medicine?.medicineName || report.medicineName || "Unknown Medicine"}
                       </div>
                       <div className="text-sm text-gray-500">
-                        Batch: {report.medicine?.batchNumber || "N/A"}
+                        Batch: {report.medicine?.batchNumber || report.batchNumber || "N/A"}
                       </div>
                     </div>
                     <div>

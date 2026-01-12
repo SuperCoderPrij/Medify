@@ -63,22 +63,39 @@ export const getManufacturerReports = query({
       .collect();
 
     const medicineIds = new Set(medicines.map((m) => m._id));
+    const batchNumbers = new Set(medicines.map((m) => m.batchNumber));
+    const medicineNames = new Set(medicines.map((m) => m.medicineName.toLowerCase()));
 
     // Get all reports
     const allReports = await ctx.db.query("reports").collect();
 
     // Filter reports related to this manufacturer's medicines
     const manufacturerReports = allReports.filter((report) => {
-      if (!report.medicineId) return false;
-      return medicineIds.has(report.medicineId);
+      // Direct match by ID
+      if (report.medicineId && medicineIds.has(report.medicineId)) return true;
+      
+      // Match by Batch Number
+      if (report.batchNumber && batchNumbers.has(report.batchNumber)) return true;
+
+      // Match by Name (case-insensitive)
+      if (report.medicineName && medicineNames.has(report.medicineName.toLowerCase())) return true;
+
+      return false;
     });
 
     // Get medicine details for each report
     const reportsWithMedicines = await Promise.all(
       manufacturerReports.map(async (report) => {
-        const medicine = report.medicineId
-          ? await ctx.db.get(report.medicineId)
-          : null;
+        let medicine = null;
+        
+        if (report.medicineId) {
+          medicine = await ctx.db.get(report.medicineId);
+        } else if (report.batchNumber) {
+          // Try to find medicine by batch number if ID is missing
+          // We filter the manufacturer's medicines we already fetched to avoid extra queries
+          medicine = medicines.find(m => m.batchNumber === report.batchNumber) || null;
+        }
+
         return {
           ...report,
           medicine,
