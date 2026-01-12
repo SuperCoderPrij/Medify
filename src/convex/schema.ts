@@ -91,7 +91,9 @@ const schema = defineSchema(
     reports: defineTable({
       medicineId: v.optional(v.id("medicines")),
       reporterId: v.optional(v.id("users")),
-      qrCodeData: v.string(),
+      qrCodeData: v.optional(v.string()),
+      medicineName: v.optional(v.string()),
+      batchNumber: v.optional(v.string()),
       reason: v.string(),
       description: v.optional(v.string()),
       location: v.optional(v.string()),

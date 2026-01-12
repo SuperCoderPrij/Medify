@@ -6,7 +6,9 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 export const submitReport = mutation({
   args: {
     medicineId: v.optional(v.id("medicines")),
-    qrCodeData: v.string(),
+    qrCodeData: v.optional(v.string()),
+    medicineName: v.optional(v.string()),
+    batchNumber: v.optional(v.string()),
     reason: v.string(),
     description: v.optional(v.string()),
     location: v.optional(v.string()),
@@ -21,6 +23,27 @@ export const submitReport = mutation({
     });
 
     return reportId;
+  },
+});
+
+// Get public reports (recent)
+export const getPublicReports = query({
+  args: {},
+  handler: async (ctx) => {
+    const reports = await ctx.db.query("reports")
+      .order("desc")
+      .take(20);
+      
+    return reports.map(r => ({
+      _id: r._id,
+      _creationTime: r._creationTime,
+      medicineName: r.medicineName || "Unknown Medicine",
+      batchNumber: r.batchNumber,
+      reason: r.reason,
+      location: r.location,
+      status: r.status,
+      description: r.description
+    }));
   },
 });
 
