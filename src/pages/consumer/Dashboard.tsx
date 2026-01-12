@@ -1,7 +1,7 @@
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { motion } from "framer-motion";
-import { AlertTriangle, Camera, CheckCircle, History, QrCode, Search, Shield, XCircle } from "lucide-react";
+import { AlertTriangle, Camera, CheckCircle, History, QrCode, Search, Shield, XCircle, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -133,9 +133,14 @@ export default function ConsumerDashboard() {
               Dhanvantari
             </span>
           </div>
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-cyan-500 to-purple-500 flex items-center justify-center text-xs font-bold">
-            {user?.name?.[0] || "U"}
-          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/")}
+            className="text-cyan-400 hover:text-white hover:bg-cyan-500/20"
+          >
+            <Home className="h-6 w-6" />
+          </Button>
         </header>
 
         {/* Welcome */}
