@@ -7,12 +7,12 @@ export default function Landing() {
   const navigate = useNavigate();
 
   // Generate random stars for background animation
-  const stars = Array.from({ length: 40 }).map((_, i) => ({
+  const stars = Array.from({ length: 100 }).map((_, i) => ({
     id: i,
     left: `${Math.random() * 100}%`,
     top: `${Math.random() * 100}%`,
     size: Math.random() * 2 + 1,
-    duration: Math.random() * 3 + 2,
+    duration: Math.random() * 1.5 + 0.5, // Faster blinking speed
     delay: Math.random() * 5
   }));
 
