@@ -74,7 +74,7 @@ export default function Landing() {
           <div className="relative">
             <div className="absolute inset-0 blur-xl bg-cyan-400/20 rounded-full" />
             <img 
-              src="https://harmless-tapir-303.convex.cloud/api/storage/c2ad483d-7d84-4cc6-8685-8946c6d6c394" 
+              src="https://harmless-tapir-303.convex.cloud/api/storage/6fe7d1e8-1ae1-4599-8bb9-5c6b39e1af03" 
               alt="Dhanvantari Logo" 
               className="relative h-[46px] w-[46px] md:h-[76px] md:w-[76px] object-contain rounded-full p-1 transition-all duration-300" 
             />

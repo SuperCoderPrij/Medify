@@ -82,7 +82,7 @@ export default function ManufacturerLayout() {
           onClick={() => navigate("/")}
         >
           <img 
-            src="https://harmless-tapir-303.convex.cloud/api/storage/c2ad483d-7d84-4cc6-8685-8946c6d6c394" 
+            src="https://harmless-tapir-303.convex.cloud/api/storage/6fe7d1e8-1ae1-4599-8bb9-5c6b39e1af03" 
             alt="Logo" 
             className="h-8 w-8 object-contain rounded-full p-0.5" 
           />
@@ -145,7 +145,7 @@ export default function ManufacturerLayout() {
             onClick={() => navigate("/")}
           >
             <img 
-              src="https://harmless-tapir-303.convex.cloud/api/storage/c2ad483d-7d84-4cc6-8685-8946c6d6c394" 
+              src="https://harmless-tapir-303.convex.cloud/api/storage/6fe7d1e8-1ae1-4599-8bb9-5c6b39e1af03" 
               alt="Logo" 
               className="h-8 w-8 shrink-0 object-contain rounded-full p-0.5" 
             />
