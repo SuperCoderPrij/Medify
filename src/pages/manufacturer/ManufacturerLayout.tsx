@@ -84,9 +84,9 @@ export default function ManufacturerLayout() {
           <img 
             src="https://harmless-tapir-303.convex.cloud/api/storage/6fe7d1e8-1ae1-4599-8bb9-5c6b39e1af03" 
             alt="Logo" 
-            className="h-8 w-8 object-contain rounded-full p-0.5" 
+            className="h-8 w-8 object-cover rounded-full" 
           />
-          <span className="font-bold text-lg bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-samarkan tracking-wide">
+          <span className="font-bold text-lg bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-samarkan tracking-wide pt-1">
             Dhanvantari
           </span>
         </div>
@@ -147,13 +147,13 @@ export default function ManufacturerLayout() {
             <img 
               src="https://harmless-tapir-303.convex.cloud/api/storage/6fe7d1e8-1ae1-4599-8bb9-5c6b39e1af03" 
               alt="Logo" 
-              className="h-8 w-8 shrink-0 object-contain rounded-full p-0.5" 
+              className="h-8 w-8 shrink-0 object-cover rounded-full" 
             />
             {isSidebarOpen && (
               <motion.span
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="font-bold text-xl bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-samarkan tracking-wide"
+                className="font-bold text-xl bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-samarkan tracking-wide pt-1"
               >
                 Dhanvantari
               </motion.span>

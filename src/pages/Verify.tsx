@@ -147,7 +147,7 @@ export default function Verify() {
             <img 
               src="https://harmless-tapir-303.convex.cloud/api/storage/6fe7d1e8-1ae1-4599-8bb9-5c6b39e1af03" 
               alt="Dhanvantari Logo" 
-              className="h-20 w-20 object-contain rounded-full p-1 bg-cyan-500/10" 
+              className="h-20 w-20 object-cover rounded-full bg-cyan-500/10" 
             />
           </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-samarkan tracking-wider">

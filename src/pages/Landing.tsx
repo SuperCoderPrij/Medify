@@ -76,10 +76,10 @@ export default function Landing() {
             <img 
               src="https://harmless-tapir-303.convex.cloud/api/storage/6fe7d1e8-1ae1-4599-8bb9-5c6b39e1af03" 
               alt="Dhanvantari Logo" 
-              className="relative h-[46px] w-[46px] md:h-[76px] md:w-[76px] object-contain rounded-full p-1 transition-all duration-300" 
+              className="relative h-[46px] w-[46px] md:h-[76px] md:w-[76px] object-cover rounded-full transition-all duration-300" 
             />
           </div>
-          <span className="text-[28px] md:text-[46px] font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-samarkan tracking-wide transition-all duration-300">
+          <span className="text-[28px] md:text-[46px] font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-samarkan tracking-wide transition-all duration-300 pt-2">
             Dhanvantari
           </span>
         </div>
