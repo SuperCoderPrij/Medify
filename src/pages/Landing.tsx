@@ -87,16 +87,6 @@ export default function Landing() {
         <div className="flex items-center gap-2 md:gap-3">
           <Button
             onClick={() => {
-              console.log("Navigating to login");
-              navigate("/auth");
-            }}
-            variant="ghost"
-            className="text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
-          >
-            Login
-          </Button>
-          <Button
-            onClick={() => {
               console.log("Navigating to dashboard");
               navigate("/auth?redirect=/app");
             }}
