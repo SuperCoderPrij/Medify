@@ -32,6 +32,8 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
   
   console.log("Auth redirect target:", redirect);
 
+  const isManufacturer = redirect.includes("manufacturer");
+
   const [step, setStep] = useState<"signIn" | { email: string }>("signIn");
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -101,13 +103,13 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className={`min-h-screen flex flex-col ${isManufacturer ? "bg-slate-50 text-slate-900" : ""}`}>
 
       
       {/* Auth Content */}
       <div className="flex-1 flex items-center justify-center">
         <div className="flex items-center justify-center h-full flex-col">
-        <Card className="min-w-[350px] pb-0 border shadow-md">
+        <Card className={`min-w-[350px] pb-0 border shadow-md ${isManufacturer ? "bg-white border-slate-200" : ""}`}>
           {step === "signIn" ? (
             <>
               <CardHeader className="text-center">
