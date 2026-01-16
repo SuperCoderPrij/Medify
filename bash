@@ -1,1 +1,1 @@
-ls -R blockchain
+readFilesToContextTool(file_paths=["src/index.css"])
