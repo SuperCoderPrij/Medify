@@ -144,7 +144,7 @@ export default function Landing() {
           <Button
             onClick={() => {
               console.log("Navigating to dashboard");
-              navigate("/auth?redirect=/app");
+              navigate("/app");
             }}
             className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-300"
           >
@@ -179,7 +179,7 @@ export default function Landing() {
               <Button
                 onClick={() => {
                   console.log("Navigating to scan/app");
-                  navigate("/auth?redirect=/app");
+                  navigate("/app");
                 }}
                 size="lg"
                 className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-300 text-lg px-8 py-6 cursor-pointer"
@@ -191,7 +191,7 @@ export default function Landing() {
               <Button
                 onClick={() => {
                   console.log("Navigating to manufacturer");
-                  navigate("/auth?redirect=/manufacturer");
+                  navigate("/manufacturer/dashboard");
                 }}
                 size="lg"
                 variant="outline"
@@ -359,7 +359,7 @@ export default function Landing() {
           <Button
             onClick={() => {
               console.log("Navigating to scan/app");
-              navigate("/auth?redirect=/app");
+              navigate("/app");
             }}
             size="lg"
             className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 shadow-[0_0_30px_rgba(34,211,238,0.4)] hover:shadow-[0_0_40px_rgba(34,211,238,0.6)] transition-all duration-300 text-lg px-8 py-6 cursor-pointer"

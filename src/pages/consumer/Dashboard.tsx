@@ -5,18 +5,20 @@ import { AlertTriangle, Camera, CheckCircle, History, QrCode, Search, Shield, XC
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense, useEffect } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
+import { PageLoader } from "@/components/PageLoader";
 
 const QRScanner = lazy(() => import("@/components/QRScanner"));
 
 export default function ConsumerDashboard() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const location = useLocation();
+  const { user, isLoading, isAuthenticated } = useAuth();
   const [isScanning, setIsScanning] = useState(false);
   const [manualCode, setManualCode] = useState("");
   const [scanResult, setScanResult] = useState<any>(null);
@@ -27,6 +29,20 @@ export default function ConsumerDashboard() {
   const getMedicineByQR = useQuery(api.medicines.getMedicineByQRCode, 
     manualCode ? { qrCodeData: manualCode } : "skip"
   );
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate(`/auth?redirect=${encodeURIComponent(location.pathname)}`);
+    }
+  }, [isLoading, isAuthenticated, navigate, location]);
+
+  if (isLoading) {
+    return <PageLoader />;
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   // Handle successful scan from QRScanner
   const handleScanSuccess = async (decodedText: string) => {

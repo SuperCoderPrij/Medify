@@ -32,9 +32,9 @@ export default function ManufacturerLayout() {
   // Redirect if not authenticated
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      navigate("/auth");
+      navigate(`/auth?redirect=${encodeURIComponent(location.pathname)}`);
     }
-  }, [isLoading, isAuthenticated, navigate]);
+  }, [isLoading, isAuthenticated, navigate, location]);
 
   if (!isLoading && !isAuthenticated) {
     return null;
