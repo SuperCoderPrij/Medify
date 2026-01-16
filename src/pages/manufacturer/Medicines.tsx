@@ -18,6 +18,7 @@ export default function ManufacturerMedicines() {
   const deleteMedicine = useMutation(api.medicines.deleteMedicine);
   const { account, connectWallet, disconnectWallet } = useWeb3();
   
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedMedicine, setSelectedMedicine] = useState<any>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [medicineToDelete, setMedicineToDelete] = useState<any>(null);
@@ -45,6 +46,11 @@ export default function ManufacturerMedicines() {
       console.error(error);
     }
   };
+
+  const filteredMedicines = medicines?.filter((medicine) => 
+    medicine.medicineName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    medicine.batchNumber.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const openBlockchain = (txHash: string) => {
     if (!txHash) {
@@ -109,14 +115,16 @@ export default function ManufacturerMedicines() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="Search medicines..."
+              placeholder="Search medicines by name or batch..."
               className="pl-9 bg-slate-950/50 border-slate-800 focus:border-cyan-500/50"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
         </div>
 
         <MedicinesTable 
-          medicines={medicines}
+          medicines={filteredMedicines}
           onViewDetails={(medicine) => {
             setSelectedMedicine(medicine);
             setIsDetailsOpen(true);
