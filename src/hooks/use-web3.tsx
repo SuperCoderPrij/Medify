@@ -101,8 +101,17 @@ export function Web3Provider({ children }: { children: ReactNode }) {
       }
     } catch (error: any) {
       console.error("Error connecting wallet:", error);
+      
+      let description = error.message || "Failed to connect to wallet";
+      
+      if (error.code === 4001) {
+        description = "Connection request rejected.";
+      } else if (error.code === -32002) {
+        description = "Request already pending. Please check your wallet.";
+      }
+
       toast.error("Connection Failed", {
-        description: error.message || "Failed to connect to wallet"
+        description
       });
     } finally {
       setIsConnecting(false);
@@ -134,13 +143,15 @@ export function Web3Provider({ children }: { children: ReactNode }) {
             // In ethers v6, listAccounts returns Signer objects, we need the address
             accounts[0].getAddress().then((address) => {
                setAccount(address);
-            });
+            }).catch(console.error);
             
             browserProvider.getNetwork().then((network) => {
               setChainId(network.chainId.toString());
-            });
+            }).catch(console.error);
           }
         }
+      }).catch((err) => {
+        console.error("Error checking existing connection:", err);
       });
 
       // Listen for account changes
