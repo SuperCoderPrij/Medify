@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
 
 // Minimal ERC721 ABI for ownerOf and tokenURI
 const ERC721_ABI = [
@@ -52,6 +53,7 @@ export default function Verify() {
       setAiResponse(response);
     } catch (error) {
       console.error(error);
+      toast.error("Failed to get AI insights. Please try again later.");
     } finally {
       setIsAskingAi(false);
     }
