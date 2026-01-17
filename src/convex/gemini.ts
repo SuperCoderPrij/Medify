@@ -51,7 +51,18 @@ export const askAboutMedicine = action({
           return "⚠️ AI Service is currently at capacity (Rate Limit Exceeded). Please try again in a minute.";
         }
 
-        throw new Error("Failed to fetch from Gemini API");
+        // Return the actual error for debugging purposes in the UI if it's not a rate limit
+        // This helps the user (and us) see what's wrong without checking server logs
+        try {
+            const errorJson = JSON.parse(errorText);
+            if (errorJson.error && errorJson.error.message) {
+                return `⚠️ AI Error: ${errorJson.error.message}`;
+            }
+        } catch (e) {
+            // ignore json parse error
+        }
+
+        throw new Error(`Failed to fetch from Gemini API: ${response.statusText}`);
       }
 
       const data = await response.json();

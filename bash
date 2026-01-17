@@ -1,1 +1,1 @@
-npx convex run gemini:askAboutMedicine '{"medicineName": "Aspirin", "manufacturer": "Bayer"}'
+curl "https://generativelanguage.googleapis.com/v1beta/models?key=AIzaSyCsJ2CsdZw7ENvx8DzR-h4pBEtmGoAEbWI"
