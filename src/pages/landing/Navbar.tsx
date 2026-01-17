@@ -6,7 +6,7 @@ export function Navbar() {
   const navigate = useNavigate();
 
   return (
-    <nav className="relative z-10 flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
+    <nav className="relative z-10 flex items-center justify-between px-6 py-4 w-full">
       <div className="flex items-center gap-2 md:gap-4 cursor-pointer" onClick={() => navigate("/")}>
         <div className="relative">
           <div className="absolute inset-0 blur-xl bg-cyan-400/20 rounded-full" />
