@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router";
 import { ethers } from "ethers";
 import { motion } from "framer-motion";
-import { Shield, CheckCircle, XCircle, Loader2, ExternalLink, AlertTriangle, Package, Calendar, Info } from "lucide-react";
+import { Shield, CheckCircle, XCircle, Loader2, ExternalLink, AlertTriangle, Package, Calendar, Info, Sparkles, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useQuery } from "convex/react";
+import { useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 // Minimal ERC721 ABI for ownerOf and tokenURI
@@ -30,6 +30,32 @@ export default function Verify() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [nftData, setNftData] = useState<any>(null);
+
+  // AI State
+  const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [isAskingAi, setIsAskingAi] = useState(false);
+  const askGemini = useAction(api.gemini.askAboutMedicine);
+
+  const handleAskGemini = async () => {
+    const name = medicineData?.medicineName || nftData?.name;
+    const manufacturer = medicineData?.manufacturerName || "Unknown Manufacturer";
+    
+    if (!name) return;
+
+    setIsAskingAi(true);
+    try {
+      const response = await askGemini({
+        medicineName: name,
+        manufacturer: manufacturer,
+        details: medicineData ? `Batch: ${medicineData.batchNumber}` : undefined
+      });
+      setAiResponse(response);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsAskingAi(false);
+    }
+  };
 
   useEffect(() => {
     // Redirect if error exists, loading is done, and no medicine data found
@@ -246,6 +272,35 @@ export default function Verify() {
                                 <span className="text-gray-500 text-sm">Unit Serial</span>
                                 <span className="text-white text-sm font-medium">#{medicineData?.unit?.serialNumber || "N/A"}</span>
                             </div>
+                        </div>
+
+                        {/* AI Section */}
+                        <div className="bg-gradient-to-br from-indigo-900/20 to-purple-900/20 rounded-lg p-4 border border-indigo-500/20">
+                          {!aiResponse ? (
+                            <Button 
+                              onClick={handleAskGemini} 
+                              disabled={isAskingAi}
+                              variant="ghost"
+                              className="w-full flex items-center justify-center gap-2 text-indigo-300 hover:text-indigo-200 hover:bg-indigo-500/20"
+                            >
+                              {isAskingAi ? (
+                                <Sparkles className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Bot className="h-4 w-4" />
+                              )}
+                              {isAskingAi ? "Analyzing Medicine..." : "Ask Gemini AI about this medicine"}
+                            </Button>
+                          ) : (
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2 text-indigo-300 border-b border-indigo-500/20 pb-2">
+                                <Sparkles className="h-4 w-4" />
+                                <span className="font-semibold text-sm">Gemini AI Insights</span>
+                              </div>
+                              <div className="text-xs text-gray-300 whitespace-pre-wrap leading-relaxed">
+                                {aiResponse}
+                              </div>
+                            </div>
+                          )}
                         </div>
                     </div>
 

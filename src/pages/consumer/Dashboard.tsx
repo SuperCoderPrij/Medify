@@ -1,7 +1,7 @@
 import { api } from "@/convex/_generated/api";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation, useQuery, useAction } from "convex/react";
 import { motion } from "framer-motion";
-import { AlertTriangle, Camera, CheckCircle, History, QrCode, Search, Shield, XCircle, Home } from "lucide-react";
+import { AlertTriangle, Camera, CheckCircle, History, QrCode, Search, Shield, XCircle, Home, Sparkles, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -24,6 +24,11 @@ export default function ConsumerDashboard() {
   const [scanResult, setScanResult] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   
+  // AI State
+  const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [isAskingAi, setIsAskingAi] = useState(false);
+  const askGemini = useAction(api.gemini.askAboutMedicine);
+
   const scanHistory = useQuery(api.scans.getUserScanHistory, { limit: 10 });
   const recordScan = useMutation(api.scans.recordScan);
   const getMedicineByQR = useQuery(api.medicines.getMedicineByQRCode, 
@@ -88,6 +93,7 @@ export default function ConsumerDashboard() {
     }
     
     setIsDialogOpen(false);
+    setAiResponse(null); // Reset AI response on new scan
     toast.success("QR Code Scanned!");
   };
 
@@ -115,6 +121,7 @@ export default function ConsumerDashboard() {
           deviceInfo: navigator.userAgent,
         });
         setScanResult({ status: "genuine", medicine: getMedicineByQR });
+        setAiResponse(null); // Reset AI response
         toast.success("Medicine Verified: Genuine");
       } else {
         // If we can't find it, it might be counterfeit (or just doesn't exist in our DB)
@@ -126,6 +133,25 @@ export default function ConsumerDashboard() {
       toast.error("Error processing scan");
     } finally {
       setIsScanning(false);
+    }
+  };
+
+  const handleAskGemini = async () => {
+    if (!scanResult?.medicine) return;
+    
+    setIsAskingAi(true);
+    try {
+      const response = await askGemini({
+        medicineName: scanResult.medicine.medicineName,
+        manufacturer: scanResult.medicine.manufacturerName,
+        details: `Batch: ${scanResult.medicine.batchNumber}`
+      });
+      setAiResponse(response);
+    } catch (error) {
+      toast.error("Failed to get AI insights");
+      console.error(error);
+    } finally {
+      setIsAskingAi(false);
     }
   };
 
@@ -241,7 +267,43 @@ export default function ConsumerDashboard() {
                             <p>Manufacturer: <span className="text-white">{scanResult.medicine.manufacturerName}</span></p>
                             <p>Batch: <span className="text-white">{scanResult.medicine.batchNumber}</span></p>
                             <p>Expiry: <span className="text-white">{scanResult.medicine.expiryDate}</span></p>
+                            
+                            {!aiResponse && (
+                              <Button 
+                                onClick={handleAskGemini} 
+                                disabled={isAskingAi}
+                                className="w-full mt-4 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white border-0"
+                              >
+                                {isAskingAi ? (
+                                  <>
+                                    <Sparkles className="mr-2 h-4 w-4 animate-spin" />
+                                    Asking Gemini...
+                                  </>
+                                ) : (
+                                  <>
+                                    <Bot className="mr-2 h-4 w-4" />
+                                    Ask Gemini AI
+                                  </>
+                                )}
+                              </Button>
+                            )}
                           </div>
+                        )}
+                        
+                        {aiResponse && (
+                          <motion.div 
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            className="mt-4 pt-4 border-t border-slate-700/50"
+                          >
+                            <div className="flex items-center gap-2 mb-2 text-purple-300">
+                              <Sparkles className="h-4 w-4" />
+                              <span className="font-semibold text-sm">Gemini AI Insights</span>
+                            </div>
+                            <div className="text-xs text-gray-300 whitespace-pre-wrap leading-relaxed bg-slate-950/50 p-3 rounded-lg border border-purple-500/20">
+                              {aiResponse}
+                            </div>
+                          </motion.div>
                         )}
                       </div>
                     )}
