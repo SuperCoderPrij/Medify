@@ -1,1 +1,1 @@
-readFilesToContextTool(file_paths=["src/index.css"])
+npx convex run gemini:askAboutMedicine '{"medicineName": "Aspirin", "manufacturer": "Bayer"}'
