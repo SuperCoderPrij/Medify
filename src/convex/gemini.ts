@@ -27,8 +27,9 @@ export const askAboutMedicine = action({
     `;
 
     try {
+      // Using gemini-1.5-flash as it is the current stable version
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
           method: "POST",
           headers: {
@@ -45,6 +46,11 @@ export const askAboutMedicine = action({
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Gemini API Error:", errorText);
+        
+        if (response.status === 429) {
+          return "⚠️ AI Service is currently at capacity (Rate Limit Exceeded). Please try again in a minute.";
+        }
+
         throw new Error("Failed to fetch from Gemini API");
       }
 
@@ -57,7 +63,8 @@ export const askAboutMedicine = action({
       return data.candidates[0].content.parts[0].text;
     } catch (error) {
       console.error("Gemini Action Error:", error);
-      throw new Error("Failed to process AI request");
+      // Return a friendly error message instead of throwing, so it displays in the UI
+      return "Unable to generate AI insights at this time. Please try again later.";
     }
   },
 });
