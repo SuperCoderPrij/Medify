@@ -16,7 +16,7 @@ export function Navbar() {
             className="relative h-[46px] w-[46px] md:h-[76px] md:w-[76px] object-cover rounded-full transition-all duration-300" 
           />
         </div>
-        <span className="text-[28px] md:text-[46px] font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-samarkan tracking-wide transition-all duration-300 pt-2">
+        <span className="text-[28px] md:text-[46px] font-normal bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-samarkan tracking-wide transition-all duration-300 pt-2">
           Dhanvantari
         </span>
       </div>

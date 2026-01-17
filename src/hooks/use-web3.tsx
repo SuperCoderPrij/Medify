@@ -63,7 +63,17 @@ export function Web3Provider({ children }: { children: ReactNode }) {
   }, []);
 
   const connectWallet = useCallback(async () => {
+    // Check if device is mobile
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
     if (!window.ethereum) {
+      if (isMobile) {
+        // Deep link to MetaMask application for mobile users
+        const targetUrl = window.location.href.replace(/^https?:\/\//, '');
+        window.location.href = `https://metamask.app.link/dapp/${targetUrl}`;
+        return;
+      }
+
       toast.error("MetaMask not found", {
         description: "Please install MetaMask to use this feature."
       });
