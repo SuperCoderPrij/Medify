@@ -2,7 +2,7 @@
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 
-const GEMINI_API_KEY = "AIzaSyCsJ2CsdZw7ENvx8DzR-h4pBEtmGoAEbWI";
+const GEMINI_API_KEY = "AIzaSyB7SD77pOg5zWqiAa-nl7qOi1vjvV0JVuM";
 
 export const askAboutMedicine = action({
   args: {
