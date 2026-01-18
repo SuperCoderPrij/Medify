@@ -28,9 +28,9 @@ export const askAboutMedicine = action({
     `;
 
     try {
-      // Using gemini-pro with v1beta API as requested
+      // Using gemini-2.0-flash as it is confirmed available in the model list
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
           method: "POST",
           headers: {
