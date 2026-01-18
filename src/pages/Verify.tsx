@@ -286,32 +286,66 @@ export default function Verify() {
                         </div>
 
                         {/* AI Section */}
-                        <div className="bg-gradient-to-br from-indigo-900/20 to-purple-900/20 rounded-lg p-4 border border-indigo-500/20">
-                          {!aiResponse ? (
-                            <Button 
-                              onClick={handleAskGemini} 
-                              disabled={isAskingAi}
-                              variant="ghost"
-                              className="w-full flex items-center justify-center gap-2 text-indigo-300 hover:text-indigo-200 hover:bg-indigo-500/20"
-                            >
-                              {isAskingAi ? (
-                                <Sparkles className="h-4 w-4 animate-spin" />
-                              ) : (
-                                <Bot className="h-4 w-4" />
-                              )}
-                              {isAskingAi ? "Verifying with AI..." : "Get AI Verification Insights"}
-                            </Button>
-                          ) : (
-                            <div className="space-y-2">
-                              <div className="flex items-center gap-2 text-indigo-300 border-b border-indigo-500/20 pb-2">
-                                <Sparkles className="h-4 w-4" />
-                                <span className="font-semibold text-sm">AI Verification Insights</span>
+                        <div className="relative overflow-hidden rounded-xl border border-white/10 bg-slate-900/50 shadow-2xl">
+                          {/* Gemini Gradient Top Bar */}
+                          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-purple-400 to-red-400" />
+                          
+                          <div className="p-5">
+                            {!aiResponse ? (
+                              <div className="flex flex-col items-center justify-center py-6 text-center space-y-4">
+                                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center border border-white/10">
+                                  <Sparkles className="h-6 w-6 text-blue-400" />
+                                </div>
+                                <div className="space-y-1">
+                                  <h4 className="text-white font-medium">AI Verification Assistant</h4>
+                                  <p className="text-xs text-gray-400 max-w-[200px] mx-auto">
+                                    Analyze medicine details for safety and authenticity using Gemini AI.
+                                  </p>
+                                </div>
+                                <Button 
+                                  onClick={handleAskGemini} 
+                                  disabled={isAskingAi}
+                                  className="bg-white text-slate-900 hover:bg-gray-100 font-medium rounded-full px-6 transition-all hover:scale-105"
+                                >
+                                  {isAskingAi ? (
+                                    <>
+                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                      Analyzing...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Sparkles className="mr-2 h-4 w-4 text-purple-600" />
+                                      Ask Gemini
+                                    </>
+                                  )}
+                                </Button>
                               </div>
-                              <div className="text-xs text-gray-300 whitespace-pre-wrap leading-relaxed">
-                                {aiResponse}
+                            ) : (
+                              <div className="space-y-4">
+                                <div className="flex items-center gap-3 pb-3 border-b border-white/5">
+                                  <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+                                    <Sparkles className="h-4 w-4 text-white" />
+                                  </div>
+                                  <div>
+                                    <h4 className="text-sm font-semibold text-white">Gemini Analysis</h4>
+                                    <p className="text-[10px] text-gray-400">Powered by Google Gemini 2.0</p>
+                                  </div>
+                                </div>
+                                
+                                <div className="prose prose-invert prose-sm max-w-none">
+                                  <div className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap font-light">
+                                    {aiResponse}
+                                  </div>
+                                </div>
+                                
+                                <div className="pt-2 flex items-center justify-between border-t border-white/5 mt-2">
+                                  <span className="text-[10px] text-gray-500">
+                                    AI-generated content may be inaccurate.
+                                  </span>
+                                </div>
                               </div>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
                     </div>
 
