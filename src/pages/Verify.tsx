@@ -45,10 +45,19 @@ export default function Verify() {
 
     setIsAskingAi(true);
     try {
+      // Construct details with all relevant metadata for verification
+      let details = "";
+      if (medicineData) {
+        details += `Batch: ${medicineData.batchNumber}. `;
+        details += `Expiry Date: ${medicineData.expiryDate}. `;
+        details += `Manufacturing Date: ${medicineData.manufacturingDate}. `;
+        if (medicineData.isActive === false) details += "Status: Deactivated/Recalled. ";
+      }
+      
       const response = await askGemini({
         medicineName: name,
         manufacturer: manufacturer,
-        details: medicineData ? `Batch: ${medicineData.batchNumber}` : undefined
+        details: details
       });
       setAiResponse(response);
     } catch (error) {
@@ -290,13 +299,13 @@ export default function Verify() {
                               ) : (
                                 <Bot className="h-4 w-4" />
                               )}
-                              {isAskingAi ? "Analyzing Medicine..." : "Ask Gemini AI about this medicine"}
+                              {isAskingAi ? "Verifying with AI..." : "Get AI Verification Insights"}
                             </Button>
                           ) : (
                             <div className="space-y-2">
                               <div className="flex items-center gap-2 text-indigo-300 border-b border-indigo-500/20 pb-2">
                                 <Sparkles className="h-4 w-4" />
-                                <span className="font-semibold text-sm">Gemini AI Insights</span>
+                                <span className="font-semibold text-sm">AI Verification Insights</span>
                               </div>
                               <div className="text-xs text-gray-300 whitespace-pre-wrap leading-relaxed">
                                 {aiResponse}
