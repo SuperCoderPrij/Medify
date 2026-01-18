@@ -15,6 +15,7 @@ import type * as http from "../http.js";
 import type * as medicines from "../medicines.js";
 import type * as reports from "../reports.js";
 import type * as scans from "../scans.js";
+import type * as test_gemini from "../test_gemini.js";
 import type * as users from "../users.js";
 
 import type {
@@ -31,6 +32,7 @@ declare const fullApi: ApiFromModules<{
   medicines: typeof medicines;
   reports: typeof reports;
   scans: typeof scans;
+  test_gemini: typeof test_gemini;
   users: typeof users;
 }>;
 
