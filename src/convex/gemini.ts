@@ -2,7 +2,7 @@
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 
-const GEMINI_API_KEY = "AIzaSyB7SD77pOg5zWqiAa-nl7qOi1vjvV0JVuM";
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 export const askAboutMedicine = action({
   args: {
@@ -11,6 +11,10 @@ export const askAboutMedicine = action({
     details: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    if (!GEMINI_API_KEY) {
+      return "Error: Gemini API key is not configured in the environment variables.";
+    }
+
     const prompt = `
       Analyze the following medicine for verification purposes:
       Medicine Name: "${args.medicineName}"

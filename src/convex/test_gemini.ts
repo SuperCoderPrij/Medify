@@ -1,11 +1,16 @@
 "use node";
 import { action } from "./_generated/server";
 
-const GEMINI_API_KEY = "AIzaSyB7SD77pOg5zWqiAa-nl7qOi1vjvV0JVuM";
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 export const testGemini = action({
   args: {},
   handler: async (ctx) => {
+    if (!GEMINI_API_KEY) {
+      console.error("GEMINI_API_KEY is not set");
+      return { error: "GEMINI_API_KEY is not set" };
+    }
+
     try {
       console.log("Testing Gemini API with key ending in:", GEMINI_API_KEY.slice(-4));
       const response = await fetch(
