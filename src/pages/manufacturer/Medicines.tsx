@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Plus, Search, Wallet, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useWeb3 } from "@/hooks/use-web3";

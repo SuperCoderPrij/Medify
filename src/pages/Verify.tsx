@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import { motion } from "framer-motion";
 import { Shield, CheckCircle, XCircle, Loader2, ExternalLink, AlertTriangle, Package, Calendar, Info, Sparkles, Bot } from "lucide-react";

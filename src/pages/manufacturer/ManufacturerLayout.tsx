@@ -14,7 +14,7 @@ import {
   QrCode
 } from "lucide-react";
 import { useState } from "react";
-import { Link, Outlet, useLocation, useNavigate } from "react-router";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWeb3 } from "@/hooks/use-web3";

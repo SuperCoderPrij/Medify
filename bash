@@ -1,1 +1,1 @@
-curl "https://generativelanguage.googleapis.com/v1beta/models?key=AIzaSyCsJ2CsdZw7ENvx8DzR-h4pBEtmGoAEbWI"
+pnpm remove @types/react-router-dom && npx convex dev --once && npx tsc -b --noEmit

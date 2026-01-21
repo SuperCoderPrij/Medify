@@ -5,7 +5,7 @@ import { AlertTriangle, MapPin, Calendar, ArrowLeft, ShieldAlert } from "lucide-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { PageLoader } from "@/components/PageLoader";
 
 export default function Reports() {
